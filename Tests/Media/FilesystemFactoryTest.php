@@ -5,7 +5,6 @@ namespace Zenstruck\MediaBundle\Tests\Media;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\MediaBundle\Media\Alert\NullAlertProvider;
 use Zenstruck\MediaBundle\Media\FilesystemFactory;
-use Zenstruck\MediaBundle\Media\Permission\TruePermissionProvider;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
