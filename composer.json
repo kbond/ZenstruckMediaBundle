@@ -17,6 +17,9 @@
     "require-dev": {
         "satooshi/php-coveralls":    "~0.6"
     },
+    "suggest": {
+        "zenstruck/slugify-bundle": "For the SlugableFilenameFilter"
+    },
     "autoload": {
         "psr-0": { "Zenstruck\\MediaBundle": "" }
     },

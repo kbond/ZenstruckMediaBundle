@@ -21,6 +21,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('default_layout')->defaultValue('ZenstruckMediaBundle:Twitter:default_layout.html.twig')->end()
+                ->booleanNode('slugable_filename_filter')->defaultFalse()->end()
                 ->booleanNode('media_form_type')->defaultFalse()->end()
                 ->booleanNode('role_permissions')->defaultFalse()->end()
                 ->arrayNode('filesystems')

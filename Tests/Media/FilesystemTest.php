@@ -183,27 +183,15 @@ class FilesystemTest extends BaseFilesystemTest
         $file = new UploadedFile($tempFile, 'foo.txt', null, null, null, true);
 
         $this->assertFileNotExists($this->getTempFixtureDir().'foo.txt');
-        $name = $filesystem->uploadFile($file);
+        $filesystem->uploadFile($file, 'foo.txt');
         $this->assertFileExists($this->getTempFixtureDir().'foo.txt');
-        $this->assertEquals('foo.txt', $name);
 
         touch($tempFile);
 
         $filesystem = $this->createFilesystem('A');
         $this->assertFileNotExists($this->getTempFixtureDir().'A/foo.txt');
-        $filesystem->uploadFile($file);
+        $filesystem->uploadFile($file, 'foo.txt');
         $this->assertFileExists($this->getTempFixtureDir().'A/foo.txt');
-    }
-
-    public function testUploadFileNoFile()
-    {
-        $this->setExpectedException(
-            'Zenstruck\MediaBundle\Exception\Exception',
-            'No file selected.'
-        );
-
-        $filesystem = $this->createFilesystem();
-        $filesystem->uploadFile('');
     }
 
     public function testUploadFileExists()
@@ -218,7 +206,7 @@ class FilesystemTest extends BaseFilesystemTest
         touch($tempFile);
 
         $file = new UploadedFile($tempFile, 'dolor.txt', null, null, null, true);
-        $filesystem->uploadFile($file);
+        $filesystem->uploadFile($file, 'dolor.txt');
     }
 
     public function pathProvider()

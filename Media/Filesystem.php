@@ -87,6 +87,8 @@ class Filesystem
      * @param $oldName
      * @param $newName
      *
+     * @return string The new filename
+     *
      * @throws \Zenstruck\MediaBundle\Exception\Exception
      */
     public function renameFile($oldName, $newName)
@@ -114,6 +116,8 @@ class Filesystem
         } catch (\Exception $e) {
             throw new Exception(sprintf('Error renaming %s "%s".  Check permissions.', $type, $oldName));
         }
+
+        return $newName;
     }
 
     /**
@@ -159,21 +163,14 @@ class Filesystem
 
     /**
      * @param UploadedFile $file
-     *
-     * @return null|string
+     * @param string $filename
      *
      * @throws \Zenstruck\MediaBundle\Exception\Exception
      */
-    public function uploadFile($file)
+    public function uploadFile(UploadedFile $file, $filename)
     {
-        if (!$file instanceof UploadedFile) {
-            throw new Exception('No file selected.');
-        }
-
-        $filename = $file->getClientOriginalName();
-
         if (file_exists($this->workingDir.$filename)) {
-            throw new Exception(sprintf('File "%s" already exists.', $file->getClientOriginalName()));
+            throw new Exception(sprintf('File "%s" already exists.', $filename));
         }
 
         try {
@@ -181,7 +178,5 @@ class Filesystem
         } catch (\Exception $e) {
             throw new Exception(sprintf('Error uploading file "%s".  Check permissions.', $filename));
         }
-
-        return $filename;
     }
 }

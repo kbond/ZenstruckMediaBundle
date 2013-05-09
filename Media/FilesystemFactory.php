@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Zenstruck\MediaBundle\Media\Alert\AlertProviderInterface;
 use Zenstruck\MediaBundle\Media\Alert\NullAlertProvider;
+use Zenstruck\MediaBundle\Media\Filter\FilenameFilterInterface;
 use Zenstruck\MediaBundle\Media\Permission\PermissionProviderInterface;
 use Zenstruck\MediaBundle\Media\Permission\TruePermissionProvider;
 
@@ -20,6 +21,7 @@ class FilesystemFactory
     protected $alerts;
     protected $permissions;
     protected $defaultLayout;
+    protected $filenameFilters = array();
     protected $managers = array();
 
     public function __construct($defaultLayout, AlertProviderInterface $alerts = null, PermissionProviderInterface $permissions = null)
@@ -35,6 +37,11 @@ class FilesystemFactory
         $this->defaultLayout = $defaultLayout;
         $this->alerts = $alerts;
         $this->permissions = $permissions;
+    }
+
+    public function addFilenameFilter(FilenameFilterInterface $filter)
+    {
+        $this->filenameFilters[] = $filter;
     }
 
     public function addManager($name, array $config)
@@ -72,7 +79,14 @@ class FilesystemFactory
 
         $filesystem = new $config['filesystem_class']($path, $config['root_dir'], $config['web_prefix']);
 
-        return new $config['filesystem_manager_class']($name, $request->query->all(), $filesystem, $this->alerts, $this->permissions);
+        /** @var FilesystemManager $manager */
+        $manager = new $config['filesystem_manager_class']($name, $request->query->all(), $filesystem, $this->alerts, $this->permissions);
+
+        foreach ($this->filenameFilters as $filter) {
+            $manager->addFilenameFilter($filter);
+        }
+
+        return $manager;
     }
 
     public function getManagerNames()

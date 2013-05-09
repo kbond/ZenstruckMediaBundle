@@ -2,8 +2,10 @@
 
 namespace Zenstruck\MediaBundle\Media;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Zenstruck\MediaBundle\Exception\Exception;
 use Zenstruck\MediaBundle\Media\Alert\AlertProviderInterface;
+use Zenstruck\MediaBundle\Media\Filter\FilenameFilterInterface;
 use Zenstruck\MediaBundle\Media\Permission\PermissionProviderInterface;
 
 /**
@@ -19,6 +21,9 @@ class FilesystemManager
 
     protected $alerts;
     protected $permissions;
+
+    /** @var FilenameFilterInterface[] */
+    protected $filenameFilters = array();
 
     /** @var Filesystem */
     protected $filesystem;
@@ -36,6 +41,11 @@ class FilesystemManager
         if (!$filesystem->isWritable()) {
             $this->alerts->add('This directory is not writable. Check permissions.', static::ALERT_ERROR);
         }
+    }
+
+    public function addFilenameFilter(FilenameFilterInterface $filter)
+    {
+        $this->filenameFilters[] = $filter;
     }
 
     public function getName()
@@ -102,14 +112,16 @@ class FilesystemManager
             return;
         }
 
+        $newName = $this->filterFilename($newName);
+
         try {
-            $this->filesystem->renameFile($oldName, $newName);
+            $filename = $this->filesystem->renameFile($oldName, $newName);
         } catch (Exception $e) {
             $this->alerts->add($e->getMessage(), static::ALERT_ERROR);
             return;
         }
 
-        $this->alerts->add(sprintf('File "%s" renamed to "%s".', $oldName, $newName), static::ALERT_SUCCESS);
+        $this->alerts->add(sprintf('File "%s" renamed to "%s".', $oldName, $filename), static::ALERT_SUCCESS);
     }
 
     public function renameDir($oldName, $newName)
@@ -118,6 +130,8 @@ class FilesystemManager
             $this->alerts->add('You do not have the required permission to rename directories.', static::ALERT_ERROR);
             return;
         }
+
+        $newName = $this->filterFilename($newName);
 
         try {
             $this->filesystem->renameFile($oldName, $newName);
@@ -170,6 +184,8 @@ class FilesystemManager
             return;
         }
 
+        $dirName = $this->filterFilename($dirName);
+
         try {
             $this->filesystem->mkDir($dirName);
         } catch (Exception $e) {
@@ -187,13 +203,33 @@ class FilesystemManager
             return;
         }
 
+        if (!$file instanceof UploadedFile) {
+            $this->alerts->add('No file selected.', static::ALERT_ERROR);
+            return;
+        }
+
+        $filename = $this->filterFilename(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+
+        if ($extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)) {
+            $filename .= '.'.strtolower($extension);
+        }
+
         try {
-            $filename = $this->filesystem->uploadFile($file);
+            $this->filesystem->uploadFile($file, $filename);
         } catch (Exception $e) {
             $this->alerts->add($e->getMessage(), static::ALERT_ERROR);
             return;
         }
 
         $this->alerts->add(sprintf('File "%s" uploaded.', $filename), static::ALERT_SUCCESS);
+    }
+
+    protected function filterFilename($filename)
+    {
+        foreach ($this->filenameFilters as $filter) {
+            $filename = $filter->filter($filename);
+        }
+
+        return $filename;
     }
 }

@@ -27,6 +27,14 @@ class ZenstruckMediaExtension extends Extension
 
         $factoryDefinition = $container->getDefinition('zenstruck_media.filesystem_factory');
 
+        if ($config['slugable_filename_filter']) {
+            if (!array_key_exists('ZenstruckSlugifyBundle', $container->getParameter('kernel.bundles'))) {
+                throw new \Exception('ZenstruckSlugifyBundle must be installed in order to use the "slugable_filename_filter" type.');
+            }
+
+            $loader->load('slugable_filename_filter.xml');
+        }
+
         if ($config['media_form_type']) {
             $loader->load('media_type.xml');
         }
