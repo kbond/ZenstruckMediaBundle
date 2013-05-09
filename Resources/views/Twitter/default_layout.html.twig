@@ -17,7 +17,7 @@
             {% endfor %}
         {% endfor %}
 
-        {% block body %}{% endblock %}
+        {% block body %}{% block content %}{% endblock %}{% endblock %}
     </div>
 
     {% include 'ZenstruckMediaBundle:Twitter:_javascripts.html.twig' %}
