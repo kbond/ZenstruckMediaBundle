@@ -1,0 +1,21 @@
+{
+    "name": "zenstruck/media-bundle",
+    "description": "Provides a simple media/file management GUI for Symfony2",
+    "keywords": ["media", "file", "manager", "administration"],
+    "homepage": "http://zenstruck.com/project/ZenstruckMediaBundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kevin Bond",
+            "email": "kevinbond@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/symfony": "~2.1"
+    },
+    "autoload": {
+        "psr-0": { "Zenstruck\\MediaBundle": "" }
+    },
+    "target-dir": "Zenstruck/MediaBundle"
+}

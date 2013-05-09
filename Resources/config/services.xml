@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="zenstruck_media.filesystem_factory.class">Zenstruck\MediaBundle\Media\FilesystemFactory</parameter>
+        <parameter key="zenstruck_media.filesystem_manager.class">Zenstruck\MediaBundle\Media\FilesystemManager</parameter>
+        <parameter key="zenstruck_media.alert_provider.class">Zenstruck\MediaBundle\Media\Alert\SessionAlertProvider</parameter>
+        <parameter key="zenstruck_media.controller.class">Zenstruck\MediaBundle\Controller\MediaController</parameter>
+    </parameters>
+
+    <services>
+        <service id="zenstruck_media.filesystem_factory" class="%zenstruck_media.filesystem_factory.class%">
+            <argument>%zenstruck_media.default_layout%</argument>
+            <argument type="service" id="zenstruck_media.alert_provider" />
+        </service>
+        <service id="zenstruck_media.alert_provider" class="%zenstruck_media.alert_provider.class%" public="false">
+            <argument type="service" id="session" />
+        </service>
+        <service id="zenstruck_media.controller" class="%zenstruck_media.controller.class%">
+            <argument type="service" id="zenstruck_media.filesystem_factory" />
+            <argument type="service" id="templating" />
+            <argument type="service" id="router" />
+        </service>
+    </services>
+</container>
