@@ -82,6 +82,146 @@ class FilesystemManagerTest extends BaseFilesystemTest
         $this->assertEquals($type, $alerts->type);
     }
 
+    public function testFileUploadNoFile()
+    {
+        $alerts = new TestAlertProvider();
+        $filesystem = $this->createFilesystemManager('default', array(), null, null, '/files', $alerts);
+
+        $filesystem->uploadFile('');
+
+        $this->assertEquals('No file selected.', $alerts->message);
+        $this->assertEquals('error', $alerts->type);
+
+        $filesystem->uploadFile('foo.txt');
+
+        $this->assertEquals('No file selected.', $alerts->message);
+        $this->assertEquals('error', $alerts->type);
+    }
+
+    /**
+     * @dataProvider mkDirProvider
+     */
+    public function testMkDir($dirname, $message, $type, $permissions)
+    {
+        $alerts = new TestAlertProvider();
+        $permissions = new BooleanPermissionProvider($permissions);
+        $filesystem = $this->createFilesystemManager('default', array(), null, null, '/files', $alerts, $permissions);
+
+        $filesystem->mkDir($dirname);
+
+        $this->assertEquals($message, $alerts->message);
+        $this->assertEquals($type, $alerts->type);
+    }
+
+    /**
+     * @dataProvider deleteFileProvider
+     */
+    public function testDeleteFile($filename, $message, $type, $permissions)
+    {
+        $alerts = new TestAlertProvider();
+        $permissions = new BooleanPermissionProvider($permissions);
+        $filesystem = $this->createFilesystemManager('default', array(), null, null, '/files', $alerts, $permissions);
+
+        $filesystem->deleteFile($filename);
+
+        $this->assertEquals($message, $alerts->message);
+        $this->assertEquals($type, $alerts->type);
+    }
+
+    /**
+     * @dataProvider deleteDirProvider
+     */
+    public function testDeleteDir($filename, $message, $type, $permissions)
+    {
+        $alerts = new TestAlertProvider();
+        $permissions = new BooleanPermissionProvider($permissions);
+        $filesystem = $this->createFilesystemManager('default', array(), null, null, '/files', $alerts, $permissions);
+
+        $filesystem->deleteDir($filename);
+
+        $this->assertEquals($message, $alerts->message);
+        $this->assertEquals($type, $alerts->type);
+    }
+
+    /**
+     * @dataProvider renameFileProvider
+     */
+    public function testRenameFile($oldName, $newName, $message, $type, $permissions)
+    {
+        $alerts = new TestAlertProvider();
+        $permissions = new BooleanPermissionProvider($permissions);
+        $filesystem = $this->createFilesystemManager('default', array(), null, null, '/files', $alerts, $permissions);
+
+        $filesystem->renameFile($oldName, $newName);
+
+        $this->assertEquals($message, $alerts->message);
+        $this->assertEquals($type, $alerts->type);
+    }
+
+    /**
+     * @dataProvider renameDirProvider
+     */
+    public function testDirFile($oldName, $newName, $message, $type, $permissions)
+    {
+        $alerts = new TestAlertProvider();
+        $permissions = new BooleanPermissionProvider($permissions);
+        $filesystem = $this->createFilesystemManager('default', array(), null, null, '/files', $alerts, $permissions);
+
+        $filesystem->renameDir($oldName, $newName);
+
+        $this->assertEquals($message, $alerts->message);
+        $this->assertEquals($type, $alerts->type);
+    }
+
+    public function mkDirProvider()
+    {
+        return array(
+            array('B', 'Directory "B" created.', 'success', true),
+            array('A', 'Failed to create directory "A".  It already exists.', 'error', true),
+            array('B', 'You do not have the required permission to create directories.', 'error', false)
+        );
+    }
+
+    public function deleteFileProvider()
+    {
+        return array(
+            array('dolor.txt', 'File "dolor.txt" deleted.', 'success', true),
+            array('foo.txt', 'No file/directory named "foo.txt".', 'error', true),
+            array('dolor.txt', 'You do not have the required permission to delete files.', 'error', false)
+        );
+    }
+
+    public function deleteDirProvider()
+    {
+        return array(
+            array('A', 'Directory "A" deleted.', 'success', true),
+            array('C', 'No file/directory named "C".', 'error', true),
+            array('A', 'You do not have the required permission to delete directories.', 'error', false)
+        );
+    }
+
+    public function renameFileProvider()
+    {
+        return array(
+            array('dolor.txt', 'foo.txt', 'File "dolor.txt" renamed to "foo.txt".', 'success', true),
+            array('dolor.txt', 'ipsum.txt', 'The file "ipsum.txt" already exists.', 'error', true),
+            array('nofile.txt', 'foo.txt', 'The file/directory "nofile.txt" does not exist.', 'error', true),
+            array('dolor.txt', 'dolor.txt', 'You didn\'t specify a new name for "dolor.txt".', 'error', true),
+            array('dolor.txt', 'foo.txt', 'You do not have the required permission to rename files.', 'error', false),
+        );
+    }
+
+    public function renameDirProvider()
+    {
+        return array(
+            array('A', 'B', 'Directory "A" renamed to "B".', 'success', true),
+            array('A', 'copy', 'The directory "copy" already exists.', 'error', true),
+            array('J', 'B', 'The file/directory "J" does not exist.', 'error', true),
+            array('A', 'A', 'You didn\'t specify a new name for "A".', 'error', true),
+            array('A', 'B', 'You do not have the required permission to rename directories.', 'error', false),
+        );
+    }
+
     public function fileUploadProvider()
     {
         return array(

@@ -94,6 +94,11 @@ class Filesystem
     public function renameFile($oldName, $newName)
     {
         $oldFile = $this->workingDir.$oldName;
+
+        if (!file_exists($oldFile)) {
+            throw new Exception(sprintf('The file/directory "%s" does not exist.', $oldName));
+        }
+
         $type = is_dir($oldFile) ? 'directory' : 'file';
 
         if ('file' === $type) {
@@ -128,6 +133,11 @@ class Filesystem
     public function deleteFile($filename)
     {
         $file = $this->workingDir.$filename;
+
+        if (!file_exists($file)) {
+            throw new Exception(sprintf('No file/directory named "%s".', $filename));
+        }
+
         $type = is_dir($file) ? 'directory' : 'file';
 
         try {
