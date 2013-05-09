@@ -33,6 +33,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('web_prefix')->defaultValue('/files')->isRequired()->end()
                             ->scalarNode('filesystem_class')->defaultValue('Zenstruck\MediaBundle\Media\Filesystem')->end()
                             ->scalarNode('filesystem_manager_class')->defaultValue('Zenstruck\MediaBundle\Media\FilesystemManager')->end()
+                            ->scalarNode('allowed_extensions')->defaultNull()->info('Comma separated list of extensions')->example('jpg,gif,png')->end()
                         ->end()
                     ->end()
                 ->end()

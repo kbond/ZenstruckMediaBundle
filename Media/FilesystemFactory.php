@@ -47,10 +47,15 @@ class FilesystemFactory
     public function addManager($name, array $config)
     {
         $resolver = new OptionsResolver();
-        $resolver->setRequired(array('root_dir', 'web_prefix', 'filesystem_manager_class', 'filesystem_class'));
+        $resolver->setRequired(array(
+                'root_dir',
+                'web_prefix'
+            )
+        );
         $resolver->setDefaults(array(
                 'filesystem_manager_class' => static::FILESYSTEM_MANAGER_CLASS,
-                'filesystem_class'=> static::FILESYSTEM_CLASS
+                'filesystem_class'=> static::FILESYSTEM_CLASS,
+                'allowed_extensions' => null
             )
         );
 
@@ -80,7 +85,7 @@ class FilesystemFactory
         $filesystem = new $config['filesystem_class']($path, $config['root_dir'], $config['web_prefix']);
 
         /** @var FilesystemManager $manager */
-        $manager = new $config['filesystem_manager_class']($name, $request->query->all(), $filesystem, $this->alerts, $this->permissions);
+        $manager = new $config['filesystem_manager_class']($name, $request->query->all(), $filesystem, $this->alerts, $this->permissions, $config['allowed_extensions']);
 
         foreach ($this->filenameFilters as $filter) {
             $manager->addFilenameFilter($filter);

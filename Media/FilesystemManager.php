@@ -21,6 +21,7 @@ class FilesystemManager
 
     protected $alerts;
     protected $permissions;
+    protected $allowedExtensions = array();
 
     /** @var FilenameFilterInterface[] */
     protected $filenameFilters = array();
@@ -29,7 +30,9 @@ class FilesystemManager
     protected $filesystem;
     protected $files;
 
-    public function __construct($name, array $parameters, Filesystem $filesystem, AlertProviderInterface $alerts, PermissionProviderInterface $permissions)
+    public function __construct($name, array $parameters, Filesystem $filesystem,
+        AlertProviderInterface $alerts, PermissionProviderInterface $permissions,
+        $allowedExtensions = null)
     {
         $this->name = $name;
         $this->filesystem = $filesystem;
@@ -37,6 +40,10 @@ class FilesystemManager
         $this->permissions = $permissions;
         $this->parameters = $parameters;
         $this->files = $this->filesystem->getFiles();
+
+        if ($allowedExtensions) {
+            $this->allowedExtensions = array_map('trim', explode(',', $allowedExtensions));
+        }
 
         if (!$filesystem->isWritable()) {
             $this->alerts->add('This directory is not writable. Check permissions.', static::ALERT_ERROR);
@@ -208,10 +215,17 @@ class FilesystemManager
             return;
         }
 
+        $extension = strtolower(pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION));
+
+        if (count($this->allowedExtensions) && !in_array($extension, $this->allowedExtensions)) {
+            $this->alerts->add(sprintf('The extension "%s" is not allowed. Valid extensions: "%s"', $extension, join(', ', $this->allowedExtensions)), static::ALERT_ERROR);
+            return;
+        }
+
         $filename = $this->filterFilename(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
 
-        if ($extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)) {
-            $filename .= '.'.strtolower($extension);
+        if ($extension) {
+            $filename .= '.'.$extension;
         }
 
         try {
