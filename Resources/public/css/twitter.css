@@ -34,6 +34,10 @@
     width: 100%;
 }
 
+#zenstruck-media-thumb .zenstruck-media-thumbnail-container img {
+    max-height: 130px;
+}
+
 #zenstruck-media-thumb .zenstruck-media-thumbnail-container span {
     display: table-cell;
     text-align: center;
@@ -84,10 +88,16 @@
     #zenstruck-media .zenstruck-media-thumbnail-container {
         height: 160px;
     }
+    #zenstruck-media-thumb .zenstruck-media-thumbnail-container img {
+        max-height: 160px;
+    }
 }
 
 @media (max-width: 979px) and (min-width: 768px) {
     #zenstruck-media .zenstruck-media-thumbnail-container {
         height: 94px;
+    }
+    #zenstruck-media-thumb .zenstruck-media-thumbnail-container img {
+        max-height: 94px;
     }
 }
