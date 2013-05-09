@@ -9,7 +9,7 @@
 {% block content %}
     <div id="zenstruck-media" data-layout="{{ layout }}" data-ckeditor="{{ ckeditor }}">
         <div class="btn-toolbar">
-            <div class="btn-group">
+            <div class="btn-group pull-left">
                 {% if manager.path %}
                     <a class="btn btn-small" href="{{ path('zenstruck_media_list', manager.requestParams({ 'path': manager.previousPath })) }}"><i class="icon-arrow-left"></i></a>
                 {% else %}
@@ -17,20 +17,22 @@
                 {% endif %}
             </div>
 
-            <div class="btn-text">
-                /
-                {% if manager.path %}
-                    <a href="{{ path('zenstruck_media_list', manager.requestParams({ 'path': null })) }}"><em>root</em></a> /
-                {% endif %}
-                {% set prev_path = [] %}
-                {% for dir in manager.ancestry %}
-                    {% set prev_path = prev_path|merge([dir]) %}
-                    {% if not loop.last %}
-                        <a href="{{ path('zenstruck_media_list', manager.requestParams({ 'path': prev_path|join('/') })) }}">{{ dir }}</a> /
-                    {% else %}
-                        {{ dir }}
+            <div class="btn-group pull-left">
+                <div class="btn-text">
+                    /
+                    {% if manager.path %}
+                        <a href="{{ path('zenstruck_media_list', manager.requestParams({ 'path': null })) }}"><em>root</em></a> /
                     {% endif %}
-                {% endfor %}
+                    {% set prev_path = [] %}
+                    {% for dir in manager.ancestry %}
+                        {% set prev_path = prev_path|merge([dir]) %}
+                        {% if not loop.last %}
+                            <a href="{{ path('zenstruck_media_list', manager.requestParams({ 'path': prev_path|join('/') })) }}">{{ dir }}</a> /
+                        {% else %}
+                            {{ dir }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
 
             {% if filesystems|length > 1 and not manager.parameter('lock') %}

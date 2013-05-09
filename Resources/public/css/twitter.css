@@ -11,7 +11,6 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
-    margin: 0 5px 0 5px;
     padding: 2px 10px;
     line-height: 20px;
 }
@@ -53,6 +52,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    line-height: 20px;
 }
 
 #zenstruck-media-thumb .zenstruck-media-actions {
