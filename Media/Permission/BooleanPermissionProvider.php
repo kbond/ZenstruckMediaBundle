@@ -5,35 +5,42 @@ namespace Zenstruck\MediaBundle\Media\Permission;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class TruePermissionProvider implements PermissionProviderInterface
+class BooleanPermissionProvider implements PermissionProviderInterface
 {
+    protected $return;
+
+    public function __construct($return = true)
+    {
+        $this->return = $return;
+    }
+
     public function canMkDir()
     {
-        return true;
+        return $this->return;
     }
 
     public function canRenameFile()
     {
-        return true;
+        return $this->return;
     }
 
     public function canRenameDir()
     {
-        return true;
+        return $this->return;
     }
 
     public function canDeleteFile()
     {
-        return true;
+        return $this->return;
     }
 
     public function canDeleteDir()
     {
-        return true;
+        return $this->return;
     }
 
     public function canUploadFile()
     {
-        return true;
+        return $this->return;
     }
 }

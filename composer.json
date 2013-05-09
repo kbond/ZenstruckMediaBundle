@@ -15,7 +15,8 @@
         "symfony/symfony": "~2.1"
     },
     "require-dev": {
-        "satooshi/php-coveralls":    "~0.6"
+        "satooshi/php-coveralls": "~0.6",
+        "zenstruck/slugify-bundle": "~1.0"
     },
     "suggest": {
         "zenstruck/slugify-bundle": "For the SlugableFilenameFilter"

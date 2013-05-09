@@ -8,7 +8,7 @@ use Zenstruck\MediaBundle\Media\Alert\AlertProviderInterface;
 use Zenstruck\MediaBundle\Media\Alert\NullAlertProvider;
 use Zenstruck\MediaBundle\Media\Filter\FilenameFilterInterface;
 use Zenstruck\MediaBundle\Media\Permission\PermissionProviderInterface;
-use Zenstruck\MediaBundle\Media\Permission\TruePermissionProvider;
+use Zenstruck\MediaBundle\Media\Permission\BooleanPermissionProvider;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -31,7 +31,7 @@ class FilesystemFactory
         }
 
         if (!$permissions) {
-            $permissions = new TruePermissionProvider();
+            $permissions = new BooleanPermissionProvider();
         }
 
         $this->defaultLayout = $defaultLayout;
