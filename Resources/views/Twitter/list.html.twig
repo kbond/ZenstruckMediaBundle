@@ -101,6 +101,10 @@
                         <label class="control-label" for="zenstruck-media-upload-files">Select a File</label>
                         <div class="controls">
                             <input type="file" name="file" id="zenstruck-media-upload-files">
+                            {% if manager.allowedExtensions|length %}
+                                <span class="help-block">Allowed Extensions: {{ manager.allowedExtensions|join(', ') }}</span>
+                            {% endif %}
+
                         </div>
                     </div>
                 </div>

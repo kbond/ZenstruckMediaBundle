@@ -75,6 +75,11 @@ class FilesystemManager
         return $this->filesystem->getPath();
     }
 
+    public function getAllowedExtensions()
+    {
+        return $this->allowedExtensions;
+    }
+
     public function getParameter($key, $default = null, array $validOptions = array())
     {
         // use default if not set
