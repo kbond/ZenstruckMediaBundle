@@ -42,7 +42,7 @@
                     <ul class="dropdown-menu">
                         {% for filesystem in filesystems %}
                             {% if filesystem != manager.name %}
-                                <li><a href="{{ path('zenstruck_media_list', manager.requestParams({ 'filesystem': filesystem })) }}">Filesystem: {{ filesystem }}</a></li>
+                                <li><a href="{{ path('zenstruck_media_list', manager.requestParams({ 'filesystem': filesystem, 'path': null })) }}">Filesystem: {{ filesystem }}</a></li>
                             {% endif %}
                         {% endfor %}
                     </ul>
