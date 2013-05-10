@@ -3,7 +3,11 @@
 {% block title %}Media Manager{% endblock %}
 
 {% block content %}
-    <div id="zenstruck-media" ng-app="ZenstruckMedia">
+    <div id="zenstruck-media" ng-app="ZenstruckMedia"
+         data-list-url="{{ path('zenstruck_media_files') }}"
+         data-opener="{{ opener }}"
+         data-opener-param="{{ opener_param }}"
+    >
         <div ng-view></div>
 
         <script type="text/ng-template" id="list.html">
@@ -27,7 +31,7 @@
                         </span>
                         <span class="zenstruck-media-thumbnail-caption">[[ file.filename ]]</span>
                     </a>
-                    <a href="" ng-switch-when="file" title="[[ file.filename ]]" data-file="[[ file.web_path ]]" class="thumbnail">
+                    <a href="" ng-click="clickFile(file)" ng-switch-when="file" title="[[ file.filename ]]" data-file="[[ file.web_path ]]" class="thumbnail">
                         <span class="zenstruck-media-thumbnail-container">
                             <span ng-switch="file.image">
                                 <img ng-switch-when="true" ng-src="[[ file.web_path ]]" />

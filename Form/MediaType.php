@@ -27,12 +27,12 @@ class MediaType extends AbstractType
 
         if (!$url) {
             try {
-                $url = $this->router->generate('zenstruck_media_list', array(
-                        'layout' => 'iframe',
+                $url = $this->router->generate('zenstruck_media_index', array(
+                        'opener' => 'media-widget',
                         'filesystem' => $options['filesystem']
                     ));
             } catch (RouteNotFoundException $e) {
-                throw new \Exception('The route "zenstruck_media_list" is not enabled.');
+                throw new \Exception('The route "zenstruck_media_index" is not enabled.');
             }
         }
 

@@ -38,10 +38,20 @@ class MediaController
             throw new NotFoundHttpException($e->getMessage());
         }
 
+        $opener = $request->query->get('opener');
+        $openerParam = $request->query->get('opener_param');
+
+        if (!$opener && $param = $request->query->get('CKEditorFuncNum')) {
+            $opener = 'ckeditor';
+            $openerParam = $param;
+        }
+
         return new Response($this->templating->render('ZenstruckMediaBundle:Twitter:index.html.twig', array(
                 'manager' => $manager,
                 'filesystems' => $this->factory->getManagerNames(),
-                'default_layout' => $this->factory->getDefaultLayout()
+                'default_layout' => $this->factory->getDefaultLayout(),
+                'opener' => $opener,
+                'opener_param' => $openerParam
             )));
     }
 
