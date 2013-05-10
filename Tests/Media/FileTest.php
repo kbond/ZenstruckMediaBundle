@@ -28,11 +28,11 @@ class FileTest extends BaseFilesystemTest
         $this->assertEquals('/foo/dolor.txt', $file->getWebPath());
     }
 
-    public function testHumanFileSize()
+    public function testSize()
     {
         $file = $this->createFile('dolor.txt');
 
-        $this->assertEquals('29 B', $file->getHumanFileSize());
+        $this->assertEquals('29 B', $file->getSize());
     }
 
     public function testIsNew()

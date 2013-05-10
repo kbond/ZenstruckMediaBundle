@@ -7,37 +7,51 @@ namespace Zenstruck\MediaBundle\Media;
  */
 class File
 {
-    protected $file;
-    protected $webPath;
+    const TYPE_FILE = 'file';
+    const TYPE_DIR  = 'dir';
 
-    protected static $imageExtensions = array(
-        'jpg', 'jpeg', 'gif', 'png'
-    );
+    protected $filename;
+    protected $extension;
+    protected $webPath;
+    protected $image;
+    protected $new;
+    protected $size;
+    protected $type;
 
     public function __construct(\SplFileInfo $file, $webPrefix)
     {
-        $this->file = $file;
-        $this->webPath = rtrim($webPrefix, '/').'/'.$this->file->getFilename();
-
+        $this->filename = $file->getFilename();
+        $this->extension = $file->getExtension();
+        $this->webPath = rtrim($webPrefix, '/').'/'.$this->filename;
+        $this->image = in_array($this->extension, static::getImageExtensions());
+        $this->new = (time() - $file->getCTime()) < 3600;
+        $this->size = $this->getHumanFileSize($file->getSize());
+        $this->type = $file->isDir() ? static::TYPE_DIR : static::TYPE_FILE;
     }
 
-    public function __call($method, $args)
+    public function getExtension()
     {
-        if (!method_exists($this->file, $method)) {
-            throw new \Exception(sprintf('Method "%s" does not exist for "%s"', $method, get_class($this->file)));
-        }
+        return $this->extension;
+    }
 
-        return call_user_func_array(array($this->file, $method), $args);
+    public function getFilename()
+    {
+        return $this->filename;
     }
 
     public function isImage()
     {
-        return in_array($this->file->getExtension(), static::$imageExtensions);
+        return $this->image;
     }
 
     public function isNew()
     {
-        return (time() - $this->file->getCTime()) < 3600;
+        return $this->new;
+    }
+
+    public function getSize()
+    {
+        return $this->size;
     }
 
     public function getWebPath()
@@ -45,17 +59,36 @@ class File
         return $this->webPath;
     }
 
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function isDir()
+    {
+        return $this->type === static::TYPE_DIR;
+    }
+
+    public function isFile()
+    {
+        return $this->type === static::TYPE_FILE;
+    }
+
+    protected static function getImageExtensions()
+    {
+        return array('jpg', 'jpeg', 'gif', 'png');
+    }
+
     /**
-     * @ref http://jeffreysambells.com/2012/10/25/human-readable-filesize-php
+     * @see http://jeffreysambells.com/2012/10/25/human-readable-filesize-php
      *
+     * @param int $bytes
      * @param int $decimals
      *
      * @return string
      */
-    public function getHumanFileSize($decimals = 0)
+    protected function getHumanFileSize($bytes, $decimals = 0)
     {
-        $bytes = $this->file->getSize();
-
         $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
         $factor = floor((strlen($bytes) - 1) / 3);
         return sprintf("%.{$decimals}f %s", $bytes / pow(1024, $factor), @$size[$factor]);

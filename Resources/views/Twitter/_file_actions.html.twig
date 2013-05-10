@@ -5,7 +5,7 @@
 {% endif %}
 
 {% if file.isDir and manager.permissions.canRenameDir %}
-    <a title="Rename" href="#" class="btn btn-mini zenstruck-media-rename" data-name="{{ file.getBasename('.'~file.getExtension) }}" data-url="{{ path('zenstruck_media_rename_dir', manager.requestParams({ 'filename': file.getFilename })) }}"><i class="icon-edit"></i></a>
+    <a title="Rename" href="#" class="btn btn-mini zenstruck-media-rename" data-name="{{ file.filename }}" data-url="{{ path('zenstruck_media_rename_dir', manager.requestParams({ 'filename': file.getFilename })) }}"><i class="icon-edit"></i></a>
 {% elseif manager.permissions.canRenameFile %}
-    <a title="Rename" href="#" class="btn btn-mini zenstruck-media-rename" data-name="{{ file.getBasename('.'~file.getExtension) }}" data-url="{{ path('zenstruck_media_rename_file', manager.requestParams({ 'filename': file.getFilename })) }}"><i class="icon-edit"></i></a>
+    <a title="Rename" href="#" class="btn btn-mini zenstruck-media-rename" data-name="{{ file.filename }}" data-url="{{ path('zenstruck_media_rename_file', manager.requestParams({ 'filename': file.getFilename })) }}"><i class="icon-edit"></i></a>
 {% endif %}
