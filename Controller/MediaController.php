@@ -2,7 +2,9 @@
 
 namespace Zenstruck\MediaBundle\Controller;
 
+use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +30,7 @@ class MediaController
         $this->router = $router;
     }
 
-    public function listAction(Request $request)
+    public function indexAction(Request $request)
     {
         try {
             $manager = $this->factory->getManager($request);
@@ -36,11 +38,27 @@ class MediaController
             throw new NotFoundHttpException($e->getMessage());
         }
 
-        return new Response($this->templating->render('ZenstruckMediaBundle:Twitter:list.html.twig', array(
+        return new Response($this->templating->render('ZenstruckMediaBundle:Twitter:index.html.twig', array(
                 'manager' => $manager,
                 'filesystems' => $this->factory->getManagerNames(),
                 'default_layout' => $this->factory->getDefaultLayout()
             )));
+    }
+
+    public function getFilesAction(Request $request)
+    {
+        try {
+            $manager = $this->factory->getManager($request);
+        } catch (DirectoryNotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage());
+        }
+
+        $files = $manager->getFiles();
+        $serializer = SerializerBuilder::create()->build()
+            ->serialize($files, 'json')
+        ;
+
+        return new Response($serializer);
     }
 
     public function uploadAction(Request $request)

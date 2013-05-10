@@ -1,0 +1,46 @@
+{% extends 'ZenstruckMediaBundle:Twitter:default_layout.html.twig' %}
+
+{% block title %}Media Manager{% endblock %}
+
+{% block content %}
+    <div id="zenstruck-media" ng-app="ZenstruckMedia">
+        <div ng-view></div>
+
+        <script type="text/ng-template" id="list.html">
+            <ul id="zenstruck-media-thumb" class="thumbnails">
+                <li ng-show="path" class="span2">
+                    <a href="#/?path=[[ prevPath ]]" class="thumbnail">
+                        <span class="zenstruck-media-thumbnail-container">
+                            <span>
+                                <img src="{{ asset('bundles/zenstruckmedia/images/icons/up.png') }}" />
+                            </span>
+                        </span>
+                        <span class="zenstruck-media-thumbnail-caption">...</span>
+                    </a>
+                </li>
+                <li class="span2" ng-repeat="file in files" ng-switch="file.type">
+                    <a href="#/?path=[[ getPathForFilename(file.filename) ]]" ng-switch-when="dir" title="[[ file.filename ]]" data-file="[[ file.web_path ]]" class="thumbnail">
+                        <span class="zenstruck-media-thumbnail-container">
+                            <span>
+                                <img src="{{ asset('bundles/zenstruckmedia/images/icons/folder.png') }}" />
+                            </span>
+                        </span>
+                        <span class="zenstruck-media-thumbnail-caption">[[ file.filename ]]</span>
+                    </a>
+                    <a href="" ng-switch-when="file" title="[[ file.filename ]]" data-file="[[ file.web_path ]]" class="thumbnail">
+                        <span class="zenstruck-media-thumbnail-container">
+                            <span ng-switch="file.image">
+                                <img ng-switch-when="true" ng-src="[[ file.web_path ]]" />
+                                <img ng-switch-default src="{{ asset('bundles/zenstruckmedia/images/icons/file.png') }}" />
+                            </span>
+                        </span>
+                        <span class="zenstruck-media-thumbnail-caption">[[ file.filename ]]</span>
+                    </a>
+                </li>
+            </ul>
+        </script>
+    </div>
+
+
+{% endblock %}
+
