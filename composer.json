@@ -13,7 +13,7 @@
     ],
     "require": {
         "symfony/symfony": "~2.1",
-        "jms/serializer": "~0.12"
+        "jms/serializer": "~0.11"
     },
     "require-dev": {
         "satooshi/php-coveralls": "~0.6",
