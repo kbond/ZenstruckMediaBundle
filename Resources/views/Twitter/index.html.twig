@@ -11,6 +11,20 @@
         <div ng-view></div>
 
         <script type="text/ng-template" id="list.html">
+            <div class="btn-toolbar">
+                <div class="btn-group">
+                    <a ng-class="{btn: true, 'btn-small': true, 'disabled': !path}" href="#/?path=[[ prevPath ]]"><i class="icon-arrow-left"></i></a>
+                </div>
+                <div class="btn-group">
+                    <div class="btn-text">
+                        / <span ng-show="path"><a href="#/"><em>root</em></a> /</span>
+                        <span ng-repeat="ancestor in pathHistory"><a href="#/?path=[[ ancestor.path ]]">[[ ancestor.name ]]</a> / </span>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
             <ul id="zenstruck-media-thumb" class="thumbnails">
                 <li ng-show="path" class="span2">
                     <a href="#/?path=[[ prevPath ]]" class="thumbnail">

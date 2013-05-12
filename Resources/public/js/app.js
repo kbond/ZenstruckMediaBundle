@@ -45,6 +45,14 @@ function listCtrl($scope, $routeParams, File, Config) {
     $scope.ancestors.pop();
     $scope.prevPath = $scope.ancestors.join('/');
     $scope.files = File.list({path: $scope.path});
+    $scope.pathHistory = [];
+
+    // setup history paths
+    var history_paths = [];
+    $scope.ancestors.forEach(function(item) {
+        history_paths.push(item);
+        $scope.pathHistory.push({ name: item, path: history_paths.join('/') });
+    });
 
     $scope.clickFile = function(file) {
         switch (Config.opener) {
