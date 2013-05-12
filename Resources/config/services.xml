@@ -23,6 +23,7 @@
             <argument type="service" id="zenstruck_media.filesystem_factory" />
             <argument type="service" id="templating" />
             <argument type="service" id="router" />
+            <argument type="service" id="jms_serializer" on-invalid="ignore" /> <!-- Serializer -->
         </service>
     </services>
 </container>

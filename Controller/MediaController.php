@@ -2,9 +2,9 @@
 
 namespace Zenstruck\MediaBundle\Controller;
 
+use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,12 +22,19 @@ class MediaController
     protected $factory;
     protected $templating;
     protected $router;
+    protected $serializer;
 
-    public function __construct(FilesystemFactory $factory, EngineInterface $templating, UrlGeneratorInterface $router)
+    public function __construct(
+        FilesystemFactory $factory,
+        EngineInterface $templating,
+        UrlGeneratorInterface $router,
+        Serializer $serializer = null
+    )
     {
         $this->factory = $factory;
         $this->templating = $templating;
         $this->router = $router;
+        $this->serializer = $serializer;
     }
 
     public function indexAction(Request $request)
@@ -64,11 +71,9 @@ class MediaController
         }
 
         $files = $manager->getFiles();
-        $serializer = SerializerBuilder::create()->build()
-            ->serialize($files, 'json')
-        ;
+        $data = $this->serialize($files);
 
-        return new Response($serializer);
+        return new Response($data);
     }
 
     public function uploadAction(Request $request)
@@ -124,5 +129,14 @@ class MediaController
         return new RedirectResponse(
             $this->router->generate('zenstruck_media_list', $manager->getRequestParams())
         );
+    }
+
+    protected function serialize($data, $format = 'json')
+    {
+        if (!$this->serializer) {
+            $this->serializer = SerializerBuilder::create()->build();
+        }
+
+        return $this->serializer->serialize($data, $format);
     }
 }
