@@ -21,6 +21,17 @@ angular.module('ZenstruckMedia', [])
     .factory('Config', function() {
         var $el = $('#zenstruck-media');
 
+        // configure hover event for file actions
+        $(document)
+            .on('mouseenter', '#zenstruck-media-thumb li', function() {
+                $('.zenstruck-media-actions', $(this)).removeClass('hide');
+            })
+            .on('mouseleave', '#zenstruck-media-thumb li', function() {
+                $('.zenstruck-media-actions', $(this)).addClass('hide');
+            })
+        ;
+
+        // setup rename dialog
         var $renameDialog = $('#zenstruck-media-rename');
         $renameDialog.on('shown', function() {
             $(this).find('input').first().focus(function() {
@@ -28,6 +39,7 @@ angular.module('ZenstruckMedia', [])
             }).focus();
         });
 
+        // setup mkdir dialog
         var $mkdirDialog = $('#zenstruck-media-mkdir');
         $mkdirDialog.on('shown', function() {
             $(this).find('input').first().focus();
@@ -51,6 +63,7 @@ angular.module('ZenstruckMedia', [])
  * Controllers
  */
 function listCtrl($scope, $routeParams, $http, Config) {
+    // properties
     $scope.path = $routeParams.path ? $routeParams.path : '';
     $scope.ancestors = $scope.path.split('/');
     $scope.new_dir_name = '';
@@ -182,4 +195,3 @@ function listCtrl($scope, $routeParams, $http, Config) {
 
     $scope.refresh();
 }
-
