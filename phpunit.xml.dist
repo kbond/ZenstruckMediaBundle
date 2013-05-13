@@ -2,10 +2,14 @@
 
 <phpunit bootstrap="./vendor/autoload.php">
     <testsuites>
-        <testsuite name="ZenstruckDashboardBundle Test Suite">
+        <testsuite name="ZenstruckMediaBundle Test Suite">
             <directory suffix="Test.php">./Tests</directory>
         </testsuite>
     </testsuites>
+
+    <php>
+        <server name="KERNEL_DIR" value="./Tests/Fixtures/App/" />
+    </php>
 
     <filter>
         <whitelist>

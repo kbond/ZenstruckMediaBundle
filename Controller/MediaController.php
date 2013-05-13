@@ -100,7 +100,7 @@ class MediaController
 
         try {
             $filesystem = $this->factory->getFilesystem($request);
-            $message = $filesystem->deleteFile($filename);
+            $message = $filesystem->delete($filename);
         } catch(Exception $e) {
             return $this->getMessageResponse($e->getMessage(), 400);
         }
@@ -115,7 +115,7 @@ class MediaController
 
         try {
             $filesystem = $this->factory->getFilesystem($request);
-            $message = $filesystem->renameFile($oldName, $newName);
+            $message = $filesystem->rename($oldName, $newName);
 
         } catch (Exception $e) {
             return $this->getMessageResponse($e->getMessage(), 400);
@@ -124,11 +124,11 @@ class MediaController
         return $this->getMessageResponse($message);
     }
 
-    public function createDirectoryAction(Request $request)
+    public function mkdirAction(Request $request)
     {
         try {
             $filesystem = $this->factory->getFilesystem($request);
-            $message = $filesystem->mkDir($request->query->get('dir_name'));
+            $message = $filesystem->mkdir($request->query->get('dir_name'));
         } catch (Exception $e) {
             return $this->getMessageResponse($e->getMessage(), 400);
         }

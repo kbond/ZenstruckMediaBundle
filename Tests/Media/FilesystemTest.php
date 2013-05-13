@@ -25,7 +25,7 @@ class FilesystemTest extends BaseFilesystemTest
 
     public function testWorkingDirWithoutSlash()
     {
-        $filesystem = new Filesystem('default', 'copy/A', sys_get_temp_dir().'/Fixures', '/files');
+        $filesystem = new Filesystem('default', 'copy/A', sys_get_temp_dir().'/Fixtures', '/files');
         $this->assertEquals($this->getTempFixtureDir().'copy/A/', $filesystem->getWorkingDir());
     }
 
@@ -93,22 +93,22 @@ class FilesystemTest extends BaseFilesystemTest
     public function testRenameFile()
     {
         $filesystem = $this->createFilesystem();
-        $filesystem->renameFile('dolor.txt', 'foo.txt');
+        $filesystem->rename('dolor.txt', 'foo.txt');
 
         $this->assertFileExists($this->getTempFixtureDir().'foo.txt');
         $this->assertFileNotExists($this->getTempFixtureDir().'dolor.txt');
 
-        $filesystem->renameFile('ipsum.txt', 'bar.dat');
+        $filesystem->rename('ipsum.txt', 'bar.dat');
         $this->assertFileExists($this->getTempFixtureDir().'bar.txt');
 
         $filesystem = $this->createFilesystem('A');
-        $filesystem->renameFile('a.dat', 'foo.dat');
+        $filesystem->rename('a.dat', 'foo.dat');
 
         $this->assertFileExists($this->getTempFixtureDir().'A/foo.dat');
         $this->assertTrue(is_file($this->getTempFixtureDir().'A/foo.dat'));
 
         $filesystem = $this->createFilesystem('A');
-        $filesystem->renameFile('B', 'Foo');
+        $filesystem->rename('B', 'Foo');
 
         $this->assertFileExists($this->getTempFixtureDir().'A/Foo');
         $this->assertTrue(is_dir($this->getTempFixtureDir().'A/Foo'));
@@ -122,7 +122,7 @@ class FilesystemTest extends BaseFilesystemTest
         );
 
         $filesystem = $this->createFilesystem();
-        $filesystem->renameFile('foo.txt', 'bar.txt');
+        $filesystem->rename('foo.txt', 'bar.txt');
     }
 
     public function testRenameFileSameName()
@@ -133,7 +133,7 @@ class FilesystemTest extends BaseFilesystemTest
         );
 
         $filesystem = $this->createFilesystem();
-        $filesystem->renameFile('dolor.txt', 'dolor.txt');
+        $filesystem->rename('dolor.txt', 'dolor.txt');
     }
 
     public function testRenameFileExists()
@@ -144,7 +144,7 @@ class FilesystemTest extends BaseFilesystemTest
         );
 
         $filesystem = $this->createFilesystem();
-        $filesystem->renameFile('ipsum.txt', 'dolor.txt');
+        $filesystem->rename('ipsum.txt', 'dolor.txt');
     }
 
     public function testDeleteFile()
@@ -152,12 +152,12 @@ class FilesystemTest extends BaseFilesystemTest
         $filesystem = $this->createFilesystem();
 
         $this->assertFileExists($this->getTempFixtureDir().'dolor.txt');
-        $filesystem->deleteFile('dolor.txt');
+        $filesystem->delete('dolor.txt');
         $this->assertFileNotExists($this->getTempFixtureDir().'dolor.txt');
 
         $filesystem = $this->createFilesystem('A');
         $this->assertFileExists($this->getTempFixtureDir().'A/B');
-        $filesystem->deleteFile('B');
+        $filesystem->delete('B');
         $this->assertFileNotExists($this->getTempFixtureDir().'A/B');
     }
 
@@ -169,25 +169,25 @@ class FilesystemTest extends BaseFilesystemTest
         );
 
         $filesystem = $this->createFilesystem();
-        $filesystem->deleteFile('foo.txt');
+        $filesystem->delete('foo.txt');
     }
 
-    public function testMkDir()
+    public function testMkdir()
     {
         $filesystem = $this->createFilesystem();
 
         $this->assertFileNotExists($this->getTempFixtureDir().'foo');
-        $filesystem->mkDir('foo');
+        $filesystem->mkdir('foo');
         $this->assertFileExists($this->getTempFixtureDir().'foo');
 
         $filesystem = $this->createFilesystem('A');
         $this->assertFileNotExists($this->getTempFixtureDir().'A/foo');
-        $filesystem->mkDir('foo');
+        $filesystem->mkdir('foo');
         $this->assertFileExists($this->getTempFixtureDir().'A/foo');
         $this->assertTrue(is_dir($this->getTempFixtureDir().'A/foo'));
     }
 
-    public function testMkDirNoName()
+    public function testMkdirNoName()
     {
         $this->setExpectedException(
             'Zenstruck\MediaBundle\Exception\Exception',
@@ -195,10 +195,10 @@ class FilesystemTest extends BaseFilesystemTest
         );
 
         $filesystem = $this->createFilesystem();
-        $filesystem->mkDir('');
+        $filesystem->mkdir('');
     }
 
-    public function testMkDirExists()
+    public function testMkdirExists()
     {
         $this->setExpectedException(
             'Zenstruck\MediaBundle\Exception\Exception',
@@ -206,7 +206,7 @@ class FilesystemTest extends BaseFilesystemTest
         );
 
         $filesystem = $this->createFilesystem();
-        $filesystem->mkDir('A');
+        $filesystem->mkdir('A');
     }
 
     public function testUploadFile()
@@ -264,10 +264,10 @@ class FilesystemTest extends BaseFilesystemTest
         $filesystem = $this->createFilesystem();
         $filesystem->addFilenameFilter(new SlugifyFilenameFilter(new Slugify()));
 
-        $filesystem->renameFile('dolor.txt', 'foo bar!.txt');
+        $filesystem->rename('dolor.txt', 'foo bar!.txt');
         $this->assertFileExists($this->getTempFixtureDir().'foo-bar.txt');
 
-        $filesystem->mkDir('Foo Bar!');
+        $filesystem->mkdir('Foo Bar!');
         $this->assertFileExists($this->getTempFixtureDir().'foo-bar');
 
         $tempFile = sys_get_temp_dir().'/foo baz.txt';

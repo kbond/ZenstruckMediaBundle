@@ -112,8 +112,16 @@ class Filesystem
      *
      * @throws \Zenstruck\MediaBundle\Exception\Exception
      */
-    public function renameFile($oldName, $newName)
+    public function rename($oldName, $newName)
     {
+        if (!$oldName) {
+            throw new Exception('You didn\'t specify an old file/directory name.');
+        }
+
+        if (!$newName) {
+            throw new Exception('You didn\'t specify an new file/directory name.');
+        }
+
         $oldFile = $this->workingDir.$oldName;
 
         if (!file_exists($oldFile)) {
@@ -156,8 +164,12 @@ class Filesystem
      *
      * @throws \Zenstruck\MediaBundle\Exception\Exception
      */
-    public function deleteFile($filename)
+    public function delete($filename)
     {
+        if (!$filename) {
+            throw new Exception('No file/directory specified.');
+        }
+
         $file = $this->workingDir.$filename;
 
         if (!file_exists($file)) {
@@ -182,7 +194,7 @@ class Filesystem
      *
      * @throws \Zenstruck\MediaBundle\Exception\Exception
      */
-    public function mkDir($dirName)
+    public function mkdir($dirName)
     {
         if (!$dirName) {
             throw new Exception('You didn\'t enter a directory name.');

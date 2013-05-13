@@ -2,22 +2,27 @@
 
 namespace Zenstruck\MediaBundle\Tests\Media;
 
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\MediaBundle\Media\Filesystem;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-abstract class BaseFilesystemTest extends \PHPUnit_Framework_TestCase
+abstract class BaseFilesystemTest extends WebTestCase
 {
     protected function setUp()
     {
+        parent::setUp();
+
         $filesystem = new SymfonyFilesystem();
         $filesystem->mirror(__DIR__.'/../Fixtures/files', $this->getTempFixtureDir());
     }
 
     protected function tearDown()
     {
+        parent::tearDown();
+
         $filesystem = new SymfonyFilesystem();
         $filesystem->remove($this->getTempFixtureDir());
     }
@@ -31,6 +36,6 @@ abstract class BaseFilesystemTest extends \PHPUnit_Framework_TestCase
 
     protected function getTempFixtureDir()
     {
-        return sys_get_temp_dir().'/Fixures/';
+        return sys_get_temp_dir().'/Fixtures/';
     }
 }

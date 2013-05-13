@@ -1,0 +1,3 @@
+zenstruck_media:
+    resource: "@ZenstruckMediaBundle/Resources/config/routing.xml"
+    prefix: /media
