@@ -5,12 +5,14 @@ namespace Zenstruck\MediaBundle\Controller;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Zenstruck\MediaBundle\Exception\DirectoryNotFoundException;
+use Zenstruck\MediaBundle\Exception\Exception;
 use Zenstruck\MediaBundle\Media\FilesystemFactory;
 use Zenstruck\MediaBundle\Media\FilesystemManager;
 
@@ -19,6 +21,9 @@ use Zenstruck\MediaBundle\Media\FilesystemManager;
  */
 class MediaController
 {
+    const ALERT_ERROR   = 'error';
+    const ALERT_SUCCESS = 'success';
+
     protected $factory;
     protected $templating;
     protected $router;
@@ -67,7 +72,7 @@ class MediaController
         try {
             $manager = $this->factory->getManager($request);
         } catch (DirectoryNotFoundException $e) {
-            throw new NotFoundHttpException($e->getMessage());
+            return $this->getMessageResponse(sprintf('Directory "%s" not found.', $request->query->get('path')), 404);
         }
 
         $files = $manager->getFiles();
@@ -118,10 +123,14 @@ class MediaController
 
     public function createDirectoryAction(Request $request)
     {
-        $manager = $this->factory->getManager($request);
-        $manager->mkDir($request->request->get('dir_name'));
+        try {
+            $manager = $this->factory->getManager($request);
+            $message = $manager->mkDir($request->query->get('dir_name'));
+        } catch (Exception $e) {
+            return $this->getMessageResponse($e->getMessage(), 400);
+        }
 
-        return $this->redirect($manager);
+        return $this->getMessageResponse($message);
     }
 
     protected function redirect(FilesystemManager $manager)
@@ -138,5 +147,10 @@ class MediaController
         }
 
         return $this->serializer->serialize($data, $format);
+    }
+
+    protected function getMessageResponse($message, $statusCode = 201)
+    {
+        return new JsonResponse(array('message' => $message), $statusCode);
     }
 }

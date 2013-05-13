@@ -192,20 +192,13 @@ class FilesystemManager
     public function mkDir($dirName)
     {
         if (!$this->permissions->canMkDir()) {
-            $this->alerts->add('You do not have the required permission to create directories.', static::ALERT_ERROR);
-            return;
+            throw new Exception('You do not have the required permission to create directories.');
         }
 
         $dirName = $this->filterFilename($dirName);
+        $this->filesystem->mkDir($dirName);
 
-        try {
-            $this->filesystem->mkDir($dirName);
-        } catch (Exception $e) {
-            $this->alerts->add($e->getMessage(), static::ALERT_ERROR);
-            return;
-        }
-
-        $this->alerts->add(sprintf('Directory "%s" created.', $dirName), static::ALERT_SUCCESS);
+        return sprintf('Directory "%s" created.', $dirName);
     }
 
     public function uploadFile($file)

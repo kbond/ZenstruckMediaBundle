@@ -5,6 +5,7 @@
 {% block content %}
     <div id="zenstruck-media" ng-app="ZenstruckMedia"
          data-list-url="{{ path('zenstruck_media_files') }}"
+         data-mkdir-url="{{ path('zenstruck_media_mkdir') }}"
          data-opener="{{ opener }}"
          data-opener-param="{{ opener_param }}"
     >
@@ -21,6 +22,17 @@
                         <span ng-repeat="ancestor in pathHistory"><a href="#/?path=[[ ancestor.path ]]">[[ ancestor.name ]]</a> / </span>
                     </div>
                 </div>
+                <div class="btn-group">
+                    <a href="" class="btn btn-small" title="Refresh" ng-click="refresh()"><i class="icon-refresh"></i></a>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-small" data-toggle="modal" href="#zenstruck-media-mkdir"><i class="icon-folder-open"></i> New</a>
+                </div>
+            </div>
+
+            <div ng-show="alert.message" class="alert alert-[[ alert.type ]]">
+                <a class="close" data-dismiss="alert" href="#">&times;</a>
+                [[ alert.message ]]
             </div>
 
             <hr />
@@ -56,6 +68,27 @@
                     </a>
                 </li>
             </ul>
+
+            <div id="zenstruck-media-mkdir" class="modal hide fade">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Make Directory</h3>
+                </div>
+                <form class="form-horizontal">
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label class="control-label" for="zenstruck-media-new-folder-name">Directory Name</label>
+                            <div class="controls">
+                                <input type="text" ng-model="new_dir_name" name="dir_name" id="zenstruck-media-new-folder-name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#" class="btn" data-dismiss="modal">Close</a>
+                        <input type="submit" ng-click="mkdir()" data-dismiss="modal" class="btn btn-primary" value="Create" />
+                    </div>
+                </form>
+            </div>
         </script>
     </div>
 

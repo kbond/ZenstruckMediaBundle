@@ -41,8 +41,10 @@
         <requirement key="_method">POST</requirement>
     </route>
 
-    <route id="zenstruck_media_mkdir" pattern="/mkdir">
+    <route id="zenstruck_media_mkdir" pattern="/mkdir.{_format}">
         <default key="_controller">zenstruck_media.controller:createDirectoryAction</default>
+        <default key="_format">json</default>
+        <requirement key="_format">json</requirement>
         <requirement key="_method">POST</requirement>
     </route>
 </routes>
