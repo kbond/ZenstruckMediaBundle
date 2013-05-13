@@ -89,20 +89,24 @@ class MediaController
         return $this->redirect($manager);
     }
 
-    public function deleteFileAction($filename, Request $request)
+    public function deleteAction(Request $request)
     {
-        $manager = $this->factory->getManager($request);
-        $manager->deleteFile($filename);
+        $type = $request->query->get('type');
+        $filename = $request->query->get('filename');
 
-        return $this->redirect($manager);
-    }
+        try {
+            $manager = $this->factory->getManager($request);
 
-    public function deleteDirAction($filename, Request $request)
-    {
-        $manager = $this->factory->getManager($request);
-        $manager->deleteDir($filename);
+            if ('dir' == $type) {
+                $message = $manager->deleteDir($filename);
+            } else {
+                $message = $manager->deleteFile($filename);
+            }
+        } catch(Exception $e) {
+            return $this->getMessageResponse($e->getMessage(), 400);
+        }
 
-        return $this->redirect($manager);
+        return $this->getMessageResponse($message);
     }
 
     public function renameFileAction($filename, Request $request)

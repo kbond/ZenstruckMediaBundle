@@ -6,6 +6,7 @@
     <div id="zenstruck-media" ng-app="ZenstruckMedia"
          data-list-url="{{ path('zenstruck_media_files') }}"
          data-mkdir-url="{{ path('zenstruck_media_mkdir') }}"
+         data-delete-url="{{ path('zenstruck_media_delete') }}"
          data-opener="{{ opener }}"
          data-opener-param="{{ opener_param }}"
     >
@@ -48,7 +49,11 @@
                         <span class="zenstruck-media-thumbnail-caption">...</span>
                     </a>
                 </li>
-                <li class="span2" ng-repeat="file in files" ng-switch="file.type">
+                <li class="span2" ng-repeat="file in files" ng-switch="file.type" ng-mouseover="">
+                    <div class="zenstruck-media-actions">
+                        <a title="Rename" href="" class="btn btn-mini zenstruck-media-rename"><i class="icon-edit"></i></a>
+                        <a title="Delete" ng-click="delete(file)" class="btn btn-mini btn-danger" href=""><i class="icon-trash icon-white"></i></a>
+                    </div>
                     <a href="#/?path=[[ getPathForFilename(file.filename) ]]" ng-switch-when="dir" title="[[ file.filename ]]" data-file="[[ file.web_path ]]" class="thumbnail">
                         <span class="zenstruck-media-thumbnail-container">
                             <span>

@@ -21,14 +21,11 @@
         <requirement key="_method">POST</requirement>
     </route>
 
-    <route id="zenstruck_media_delete_file" pattern="/delete_file/{filename}">
-        <default key="_controller">zenstruck_media.controller:deleteFileAction</default>
+    <route id="zenstruck_media_delete" pattern="/delete.{_format}">
+        <default key="_controller">zenstruck_media.controller:deleteAction</default>
+        <default key="_format">json</default>
         <requirement key="_method">DELETE</requirement>
-    </route>
-
-    <route id="zenstruck_media_delete_dir" pattern="/delete_dir/{filename}">
-        <default key="_controller">zenstruck_media.controller:deleteDirAction</default>
-        <requirement key="_method">DELETE</requirement>
+        <requirement key="_format">json</requirement>
     </route>
 
     <route id="zenstruck_media_rename_file" pattern="/rename_file/{filename}">

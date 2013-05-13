@@ -29,7 +29,8 @@ angular.module('ZenstruckMedia', [])
         return {
             routes: {
                 list_url: $el.data('list-url'),
-                mkdir_url: $el.data('mkdir-url')
+                mkdir_url: $el.data('mkdir-url'),
+                delete_url: $el.data('delete-url')
             },
             opener: $el.data('opener'),
             opener_param: $el.data('opener-param')
@@ -66,6 +67,23 @@ function listCtrl($scope, $routeParams, $http, Config) {
                 $scope.setAlert(data.message, 'error');
             })
         ;
+    };
+
+    $scope.delete = function(file) {
+        $http.delete(Config.routes.delete_url, {
+            params: {
+                path: $scope.path,
+                type: file.type,
+                filename: file.filename
+            }
+        })
+        .success(function(data) {
+            $scope.setAlert(data.message);
+            $scope.refresh();
+        })
+        .error(function(data) {
+            $scope.setAlert(data.message, 'error');
+        })
     };
 
     $scope.mkdir = function() {

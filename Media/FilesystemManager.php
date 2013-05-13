@@ -158,35 +158,23 @@ class FilesystemManager
     public function deleteFile($filename)
     {
         if (!$this->permissions->canDeleteFile()) {
-            $this->alerts->add('You do not have the required permission to delete files.', static::ALERT_ERROR);
-            return;
+            throw new Exception('You do not have the required permission to delete files.');
         }
 
-        try {
-            $this->filesystem->deleteFile($filename);
-        } catch (Exception $e) {
-            $this->alerts->add($e->getMessage(), static::ALERT_ERROR);
-            return;
-        }
+        $this->filesystem->deleteFile($filename);
 
-        $this->alerts->add(sprintf('File "%s" deleted.', $filename), static::ALERT_SUCCESS);
+        return sprintf('File "%s" deleted.', $filename);
     }
 
     public function deleteDir($filename)
     {
         if (!$this->permissions->canDeleteDir()) {
-            $this->alerts->add('You do not have the required permission to delete directories.', static::ALERT_ERROR);
-            return;
+            throw new Exception('You do not have the required permission to delete directories.');
         }
 
-        try {
-            $this->filesystem->deleteFile($filename);
-        } catch (Exception $e) {
-            $this->alerts->add($e->getMessage(), static::ALERT_ERROR);
-            return;
-        }
+        $this->filesystem->deleteFile($filename);
 
-        $this->alerts->add(sprintf('Directory "%s" deleted.', $filename), static::ALERT_SUCCESS);
+        return sprintf('Directory "%s" deleted.', $filename);
     }
 
     public function mkDir($dirName)
