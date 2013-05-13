@@ -109,12 +109,26 @@ class MediaController
         return $this->getMessageResponse($message);
     }
 
-    public function renameFileAction($filename, Request $request)
+    public function renameAction(Request $request)
     {
-        $manager = $this->factory->getManager($request);
-        $manager->renameFile($filename, $request->request->get('new_name'));
+        $type = $request->query->get('type');
+        $old_name = $request->query->get('old_name');
+        $new_name = $request->query->get('new_name');
 
-        return $this->redirect($manager);
+        try {
+            $manager = $this->factory->getManager($request);
+
+            if ('dir' == $type) {
+                $message = $manager->renameDir($old_name, $new_name);
+            } else {
+                $message = $manager->renameFile($old_name, $new_name);
+            }
+
+        } catch (Exception $e) {
+            return $this->getMessageResponse($e->getMessage(), 400);
+        }
+
+        return $this->getMessageResponse($message);
     }
 
     public function renameDirAction($filename, Request $request)

@@ -21,6 +21,13 @@ angular.module('ZenstruckMedia', [])
     .factory('Config', function() {
         var $el = $('#zenstruck-media');
 
+        var $renameDialog = $('#zenstruck-media-rename');
+        $renameDialog.on('shown', function() {
+            $(this).find('input').first().focus(function() {
+                this.select();
+            }).focus();
+        });
+
         var $mkdirDialog = $('#zenstruck-media-mkdir');
         $mkdirDialog.on('shown', function() {
             $(this).find('input').first().focus();
@@ -30,10 +37,12 @@ angular.module('ZenstruckMedia', [])
             routes: {
                 list_url: $el.data('list-url'),
                 mkdir_url: $el.data('mkdir-url'),
-                delete_url: $el.data('delete-url')
+                delete_url: $el.data('delete-url'),
+                rename_url: $el.data('rename-url')
             },
             opener: $el.data('opener'),
-            opener_param: $el.data('opener-param')
+            opener_param: $el.data('opener-param'),
+            $renameDialog: $renameDialog
         }
     })
 ;
@@ -45,6 +54,8 @@ function listCtrl($scope, $routeParams, $http, Config) {
     $scope.path = $routeParams.path ? $routeParams.path : '';
     $scope.ancestors = $scope.path.split('/');
     $scope.new_dir_name = '';
+    $scope.rename_old = null;
+    $scope.rename_new = '';
     $scope.ancestors.pop();
     $scope.prevPath = $scope.ancestors.join('/');
     $scope.files = [];
@@ -67,6 +78,30 @@ function listCtrl($scope, $routeParams, $http, Config) {
                 $scope.setAlert(data.message, 'error');
             })
         ;
+    };
+
+    $scope.openRenameDialog = function(file) {
+        $scope.rename_old = file;
+        $scope.rename_new = file.filename;
+        Config.$renameDialog.modal('show');
+    };
+
+    $scope.rename = function() {
+        $http.put(Config.routes.rename_url, {}, {
+            params: {
+                path: $scope.path,
+                type: $scope.rename_old.type,
+                old_name: $scope.rename_old.filename,
+                new_name: $scope.rename_new
+            }
+        })
+        .success(function(data) {
+            $scope.setAlert(data.message);
+            $scope.refresh();
+        })
+        .error(function(data) {
+            $scope.setAlert(data.message, 'error');
+        })
     };
 
     $scope.delete = function(file) {

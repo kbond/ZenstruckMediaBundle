@@ -120,39 +120,25 @@ class FilesystemManager
     public function renameFile($oldName, $newName)
     {
         if (!$this->permissions->canRenameFile()) {
-            $this->alerts->add('You do not have the required permission to rename files.', static::ALERT_ERROR);
-            return;
+            throw new Exception('You do not have the required permission to rename files.');
         }
 
         $newName = $this->filterFilename($newName);
+        $filename = $this->filesystem->renameFile($oldName, $newName);
 
-        try {
-            $filename = $this->filesystem->renameFile($oldName, $newName);
-        } catch (Exception $e) {
-            $this->alerts->add($e->getMessage(), static::ALERT_ERROR);
-            return;
-        }
-
-        $this->alerts->add(sprintf('File "%s" renamed to "%s".', $oldName, $filename), static::ALERT_SUCCESS);
+        return sprintf('File "%s" renamed to "%s".', $oldName, $filename);
     }
 
     public function renameDir($oldName, $newName)
     {
         if (!$this->permissions->canRenameDir()) {
-            $this->alerts->add('You do not have the required permission to rename directories.', static::ALERT_ERROR);
-            return;
+            throw new Exception('You do not have the required permission to rename directories.');
         }
 
         $newName = $this->filterFilename($newName);
+        $this->filesystem->renameFile($oldName, $newName);
 
-        try {
-            $this->filesystem->renameFile($oldName, $newName);
-        } catch (Exception $e) {
-            $this->alerts->add($e->getMessage(), static::ALERT_ERROR);
-            return;
-        }
-
-        $this->alerts->add(sprintf('Directory "%s" renamed to "%s".', $oldName, $newName), static::ALERT_SUCCESS);
+        return sprintf('Directory "%s" renamed to "%s".', $oldName, $newName);
     }
 
     public function deleteFile($filename)
