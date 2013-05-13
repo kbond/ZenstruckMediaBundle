@@ -2,9 +2,11 @@
 
 namespace Zenstruck\MediaBundle\Tests\Media;
 
+use Cocur\Slugify\Slugify;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Zenstruck\MediaBundle\Media\Filesystem;
+use Zenstruck\MediaBundle\Media\Filter\SlugifyFilenameFilter;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -23,7 +25,7 @@ class FilesystemTest extends BaseFilesystemTest
 
     public function testWorkingDirWithoutSlash()
     {
-        $filesystem = new Filesystem('copy/A', sys_get_temp_dir().'/Fixures', '/files');
+        $filesystem = new Filesystem('default', 'copy/A', sys_get_temp_dir().'/Fixures', '/files');
         $this->assertEquals($this->getTempFixtureDir().'copy/A/', $filesystem->getWorkingDir());
     }
 
@@ -46,7 +48,7 @@ class FilesystemTest extends BaseFilesystemTest
             $this->markTestSkipped('Skip on windows.');
         }
 
-        $filesystem = new Filesystem(null, '/', '/');
+        $filesystem = new Filesystem('default', null, '/', '/');
 
         $this->assertFalse($filesystem->isWritable());
     }
@@ -112,6 +114,17 @@ class FilesystemTest extends BaseFilesystemTest
         $this->assertTrue(is_dir($this->getTempFixtureDir().'A/Foo'));
     }
 
+    public function testRenameFileNotFound()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\Exception',
+            'The file/directory "foo.txt" does not exist.'
+        );
+
+        $filesystem = $this->createFilesystem();
+        $filesystem->renameFile('foo.txt', 'bar.txt');
+    }
+
     public function testRenameFileSameName()
     {
         $this->setExpectedException(
@@ -148,6 +161,17 @@ class FilesystemTest extends BaseFilesystemTest
         $this->assertFileNotExists($this->getTempFixtureDir().'A/B');
     }
 
+    public function testDeleteFileNotFound()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\Exception',
+            'No file/directory named "foo.txt".'
+        );
+
+        $filesystem = $this->createFilesystem();
+        $filesystem->deleteFile('foo.txt');
+    }
+
     public function testMkDir()
     {
         $filesystem = $this->createFilesystem();
@@ -161,6 +185,17 @@ class FilesystemTest extends BaseFilesystemTest
         $filesystem->mkDir('foo');
         $this->assertFileExists($this->getTempFixtureDir().'A/foo');
         $this->assertTrue(is_dir($this->getTempFixtureDir().'A/foo'));
+    }
+
+    public function testMkDirNoName()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\Exception',
+            'You didn\'t enter a directory name.'
+        );
+
+        $filesystem = $this->createFilesystem();
+        $filesystem->mkDir('');
     }
 
     public function testMkDirExists()
@@ -183,14 +218,14 @@ class FilesystemTest extends BaseFilesystemTest
         $file = new UploadedFile($tempFile, 'foo.txt', null, null, null, true);
 
         $this->assertFileNotExists($this->getTempFixtureDir().'foo.txt');
-        $filesystem->uploadFile($file, 'foo.txt');
+        $filesystem->uploadFile($file);
         $this->assertFileExists($this->getTempFixtureDir().'foo.txt');
 
         touch($tempFile);
 
         $filesystem = $this->createFilesystem('A');
         $this->assertFileNotExists($this->getTempFixtureDir().'A/foo.txt');
-        $filesystem->uploadFile($file, 'foo.txt');
+        $filesystem->uploadFile($file);
         $this->assertFileExists($this->getTempFixtureDir().'A/foo.txt');
     }
 
@@ -206,7 +241,42 @@ class FilesystemTest extends BaseFilesystemTest
         touch($tempFile);
 
         $file = new UploadedFile($tempFile, 'dolor.txt', null, null, null, true);
-        $filesystem->uploadFile($file, 'dolor.txt');
+        $filesystem->uploadFile($file);
+    }
+
+    public function testUploadFileBadExtension()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\Exception',
+            'The extension "txt" is not allowed. Valid extensions: "jpg, gif"'
+        );
+
+        $filesystem = $this->createFilesystem(null, null, '/files', 'jpg,gif');
+        $tempFile = sys_get_temp_dir().'/foo.txt';
+        touch($tempFile);
+
+        $file = new UploadedFile($tempFile, 'foo.txt', null, null, null, true);
+        $filesystem->uploadFile($file);
+    }
+
+    public function testSlugify()
+    {
+        $filesystem = $this->createFilesystem();
+        $filesystem->addFilenameFilter(new SlugifyFilenameFilter(new Slugify()));
+
+        $filesystem->renameFile('dolor.txt', 'foo bar!.txt');
+        $this->assertFileExists($this->getTempFixtureDir().'foo-bar.txt');
+
+        $filesystem->mkDir('Foo Bar!');
+        $this->assertFileExists($this->getTempFixtureDir().'foo-bar');
+
+        $tempFile = sys_get_temp_dir().'/foo baz.txt';
+        touch($tempFile);
+
+        $file = new UploadedFile($tempFile, 'foo baz.txt', null, null, null, true);
+        $filesystem->uploadFile($file);
+
+        $this->assertFileExists($this->getTempFixtureDir().'foo-baz.txt');
     }
 
     public function pathProvider()

@@ -24,15 +24,16 @@ class ZenstruckMediaExtension extends Extension
         $loader->load('services.xml');
 
         $container->setParameter('zenstruck_media.default_layout', $config['default_layout']);
+        $container->setParameter('zenstruck_media.filesystem.class', $config['filesystem_class']);
 
         $factoryDefinition = $container->getDefinition('zenstruck_media.filesystem_factory');
 
-        if ($config['slugable_filename_filter']) {
+        if ($config['slugify_filename_filter']) {
             if (!array_key_exists('ZenstruckSlugifyBundle', $container->getParameter('kernel.bundles'))) {
-                throw new \Exception('ZenstruckSlugifyBundle must be installed in order to use the "slugable_filename_filter" type.');
+                throw new \Exception('ZenstruckSlugifyBundle must be installed in order to use the "slugify_filename_filter" type.');
             }
 
-            $loader->load('slugable_filename_filter.xml');
+            $loader->load('slugify_filename_filter.xml');
         }
 
         if ($config['media_form_type']) {
@@ -45,7 +46,7 @@ class ZenstruckMediaExtension extends Extension
         }
 
         foreach ($config['filesystems'] as $name => $filesystemConfig) {
-            $factoryDefinition->addMethodCall('addManager', array($name, $filesystemConfig));
+            $factoryDefinition->addMethodCall('addFilesystem', array($name, $filesystemConfig));
         }
     }
 }

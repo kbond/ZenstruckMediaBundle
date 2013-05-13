@@ -6,7 +6,6 @@ use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -14,7 +13,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Zenstruck\MediaBundle\Exception\DirectoryNotFoundException;
 use Zenstruck\MediaBundle\Exception\Exception;
 use Zenstruck\MediaBundle\Media\FilesystemFactory;
-use Zenstruck\MediaBundle\Media\FilesystemManager;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -45,7 +43,7 @@ class MediaController
     public function indexAction(Request $request)
     {
         try {
-            $manager = $this->factory->getManager($request);
+            $filesystem = $this->factory->getFilesystem($request);
         } catch (DirectoryNotFoundException $e) {
             throw new NotFoundHttpException($e->getMessage());
         }
@@ -59,8 +57,8 @@ class MediaController
         }
 
         return new Response($this->templating->render('ZenstruckMediaBundle:Twitter:index.html.twig', array(
-                'manager' => $manager,
-                'filesystems' => $this->factory->getManagerNames(),
+                'filesystem' => $filesystem,
+                'filesystems' => $this->factory->getFilesystemNames(),
                 'default_layout' => $this->factory->getDefaultLayout(),
                 'opener' => $opener,
                 'opener_param' => $openerParam
@@ -70,38 +68,39 @@ class MediaController
     public function getFilesAction(Request $request)
     {
         try {
-            $manager = $this->factory->getManager($request);
+            $filesystem = $this->factory->getFilesystem($request);
         } catch (DirectoryNotFoundException $e) {
             return $this->getMessageResponse(sprintf('Directory "%s" not found.', $request->query->get('path')), 404);
         }
 
-        $files = $manager->getFiles();
-        $data = $this->serialize($files);
+        $files = $filesystem->getFiles();
 
-        return new Response($data);
+        if (!$this->serializer) {
+            $this->serializer = SerializerBuilder::create()->build();
+        }
+
+        return new Response($this->serializer->serialize($files, 'json'));
     }
 
     public function uploadAction(Request $request)
     {
-        $manager = $this->factory->getManager($request);
-        $manager->uploadFile($request->files->get('file'));
+        try {
+            $filesystem = $this->factory->getFilesystem($request);
+            $message = $filesystem->uploadFile($request->files->get('file'));
+        } catch (Exception $e) {
+            return $this->getMessageResponse($e->getMessage(), 400);
+        }
 
-        return $this->redirect($manager);
+        return $this->getMessageResponse($message);
     }
 
     public function deleteAction(Request $request)
     {
-        $type = $request->query->get('type');
         $filename = $request->query->get('filename');
 
         try {
-            $manager = $this->factory->getManager($request);
-
-            if ('dir' == $type) {
-                $message = $manager->deleteDir($filename);
-            } else {
-                $message = $manager->deleteFile($filename);
-            }
+            $filesystem = $this->factory->getFilesystem($request);
+            $message = $filesystem->deleteFile($filename);
         } catch(Exception $e) {
             return $this->getMessageResponse($e->getMessage(), 400);
         }
@@ -111,60 +110,30 @@ class MediaController
 
     public function renameAction(Request $request)
     {
-        $type = $request->query->get('type');
-        $old_name = $request->query->get('old_name');
-        $new_name = $request->query->get('new_name');
+        $oldName = $request->query->get('old_name');
+        $newName = $request->query->get('new_name');
 
         try {
-            $manager = $this->factory->getManager($request);
-
-            if ('dir' == $type) {
-                $message = $manager->renameDir($old_name, $new_name);
-            } else {
-                $message = $manager->renameFile($old_name, $new_name);
-            }
+            $filesystem = $this->factory->getFilesystem($request);
+            $message = $filesystem->renameFile($oldName, $newName);
 
         } catch (Exception $e) {
             return $this->getMessageResponse($e->getMessage(), 400);
         }
 
         return $this->getMessageResponse($message);
-    }
-
-    public function renameDirAction($filename, Request $request)
-    {
-        $manager = $this->factory->getManager($request);
-        $manager->renameDir($filename, $request->request->get('new_name'));
-
-        return $this->redirect($manager);
     }
 
     public function createDirectoryAction(Request $request)
     {
         try {
-            $manager = $this->factory->getManager($request);
-            $message = $manager->mkDir($request->query->get('dir_name'));
+            $filesystem = $this->factory->getFilesystem($request);
+            $message = $filesystem->mkDir($request->query->get('dir_name'));
         } catch (Exception $e) {
             return $this->getMessageResponse($e->getMessage(), 400);
         }
 
         return $this->getMessageResponse($message);
-    }
-
-    protected function redirect(FilesystemManager $manager)
-    {
-        return new RedirectResponse(
-            $this->router->generate('zenstruck_media_list', $manager->getRequestParams())
-        );
-    }
-
-    protected function serialize($data, $format = 'json')
-    {
-        if (!$this->serializer) {
-            $this->serializer = SerializerBuilder::create()->build();
-        }
-
-        return $this->serializer->serialize($data, $format);
     }
 
     protected function getMessageResponse($message, $statusCode = 201)

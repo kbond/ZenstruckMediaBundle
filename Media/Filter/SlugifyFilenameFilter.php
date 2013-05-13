@@ -7,7 +7,7 @@ use Cocur\Slugify\Slugify;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class SlugableFilenameFilter implements FilenameFilterInterface
+class SlugifyFilenameFilter implements FilenameFilterInterface
 {
     protected $slugify;
 

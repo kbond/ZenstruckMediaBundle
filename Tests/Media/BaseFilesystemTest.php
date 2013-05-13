@@ -2,11 +2,8 @@
 
 namespace Zenstruck\MediaBundle\Tests\Media;
 
-use Zenstruck\MediaBundle\Media\Alert\NullAlertProvider;
 use Zenstruck\MediaBundle\Media\Filesystem;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
-use Zenstruck\MediaBundle\Media\FilesystemManager;
-use Zenstruck\MediaBundle\Media\Permission\BooleanPermissionProvider;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -25,22 +22,11 @@ abstract class BaseFilesystemTest extends \PHPUnit_Framework_TestCase
         $filesystem->remove($this->getTempFixtureDir());
     }
 
-    protected function createFilesystem($path = null, $rootDir = null, $webPrefix = '/files')
+    protected function createFilesystem(
+        $path = null, $rootDir = null, $webPrefix = '/files', $allowedExtensions = null
+    )
     {
-        return new Filesystem($path, $this->getTempFixtureDir().$rootDir, $webPrefix);
-    }
-
-    protected function createFilesystemManager($name = 'default', $params = array(), $path = null, $rootDir = null, $webPrefix = '/files', $alertProvider = null, $permissionProvider = null, $allowedExtensions = null)
-    {
-        if (!$alertProvider) {
-            $alertProvider = new NullAlertProvider();
-        }
-
-        if (!$permissionProvider) {
-            $permissionProvider = new BooleanPermissionProvider();
-        }
-
-        return new FilesystemManager($name, $params, $this->createFilesystem($path, $rootDir, $webPrefix), $alertProvider, $permissionProvider, $allowedExtensions);
+        return new Filesystem('default', $path, $this->getTempFixtureDir().$rootDir, $webPrefix, $allowedExtensions);
     }
 
     protected function getTempFixtureDir()

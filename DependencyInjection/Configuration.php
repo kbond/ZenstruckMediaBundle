@@ -21,7 +21,8 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('default_layout')->defaultValue('ZenstruckMediaBundle:Twitter:default_layout.html.twig')->end()
-                ->booleanNode('slugable_filename_filter')->defaultFalse()->end()
+                ->booleanNode('slugify_filename_filter')->defaultFalse()->end()
+                ->scalarNode('filesystem_class')->defaultValue('Zenstruck\MediaBundle\Media\Filesystem')->end()
                 ->booleanNode('media_form_type')->defaultFalse()->end()
                 ->booleanNode('role_permissions')->defaultFalse()->end()
                 ->arrayNode('filesystems')
@@ -31,8 +32,6 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('root_dir')->defaultValue('%kernel.root_dir%/../web/files')->isRequired()->end()
                             ->scalarNode('web_prefix')->defaultValue('/files')->isRequired()->end()
-                            ->scalarNode('filesystem_class')->defaultValue('Zenstruck\MediaBundle\Media\Filesystem')->end()
-                            ->scalarNode('filesystem_manager_class')->defaultValue('Zenstruck\MediaBundle\Media\FilesystemManager')->end()
                             ->scalarNode('allowed_extensions')->defaultNull()->info('Comma separated list of extensions')->example('jpg,gif,png')->end()
                         ->end()
                     ->end()

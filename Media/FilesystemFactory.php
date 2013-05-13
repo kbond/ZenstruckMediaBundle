@@ -4,8 +4,6 @@ namespace Zenstruck\MediaBundle\Media;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Zenstruck\MediaBundle\Media\Alert\AlertProviderInterface;
-use Zenstruck\MediaBundle\Media\Alert\NullAlertProvider;
 use Zenstruck\MediaBundle\Media\Filter\FilenameFilterInterface;
 use Zenstruck\MediaBundle\Media\Permission\PermissionProviderInterface;
 use Zenstruck\MediaBundle\Media\Permission\BooleanPermissionProvider;
@@ -15,27 +13,20 @@ use Zenstruck\MediaBundle\Media\Permission\BooleanPermissionProvider;
  */
 class FilesystemFactory
 {
-    const FILESYSTEM_MANAGER_CLASS  = 'Zenstruck\MediaBundle\Media\FilesystemManager';
-    const FILESYSTEM_CLASS          = 'Zenstruck\MediaBundle\Media\Filesystem';
-
-    protected $alerts;
     protected $permissions;
     protected $defaultLayout;
+    protected $filesystemClass;
     protected $filenameFilters = array();
-    protected $managers = array();
+    protected $filesystems = array();
 
-    public function __construct($defaultLayout, AlertProviderInterface $alerts = null, PermissionProviderInterface $permissions = null)
+    public function __construct($defaultLayout, $filesystemClass = 'Zenstruck\MediaBundle\Media\Filesystem', PermissionProviderInterface $permissions = null)
     {
-        if (!$alerts) {
-            $alerts = new NullAlertProvider();
-        }
-
         if (!$permissions) {
             $permissions = new BooleanPermissionProvider();
         }
 
+        $this->filesystemClass = $filesystemClass;
         $this->defaultLayout = $defaultLayout;
-        $this->alerts = $alerts;
         $this->permissions = $permissions;
     }
 
@@ -44,7 +35,7 @@ class FilesystemFactory
         $this->filenameFilters[] = $filter;
     }
 
-    public function addManager($name, array $config)
+    public function addFilesystem($name, array $config)
     {
         $resolver = new OptionsResolver();
         $resolver->setRequired(array(
@@ -53,50 +44,46 @@ class FilesystemFactory
             )
         );
         $resolver->setDefaults(array(
-                'filesystem_manager_class' => static::FILESYSTEM_MANAGER_CLASS,
-                'filesystem_class'=> static::FILESYSTEM_CLASS,
                 'allowed_extensions' => null
             )
         );
 
-        $this->managers[$name] = $resolver->resolve($config);
+        $this->filesystems[$name] = $resolver->resolve($config);
     }
 
     /**
      * @param Request $request
      *
-     * @return FilesystemManager
+     * @return Filesystem
      */
-    public function getManager(Request $request)
+    public function getFilesystem(Request $request)
     {
-        $managers = $this->managers;
+        $managers = $this->filesystems;
         $path = $request->query->get('path');
         $name = $request->query->get('filesystem');
 
         if (array_key_exists($name, $managers)) {
-            $config = $this->managers[$name];
+            $config = $this->filesystems[$name];
         } else {
             // return 1st by default
             $config = array_shift($managers);
-            $names = array_keys($this->managers);
+            $names = array_keys($this->filesystems);
             $name = array_shift($names);
         }
 
-        $filesystem = new $config['filesystem_class']($path, $config['root_dir'], $config['web_prefix']);
-
-        /** @var FilesystemManager $manager */
-        $manager = new $config['filesystem_manager_class']($name, $request->query->all(), $filesystem, $this->alerts, $this->permissions, $config['allowed_extensions']);
+        /** @var Filesystem $filesystem */
+        $filesystem = new $this->filesystemClass($name, $path, $config['root_dir'], $config['web_prefix'], $config['allowed_extensions']);
 
         foreach ($this->filenameFilters as $filter) {
-            $manager->addFilenameFilter($filter);
+            $filesystem->addFilenameFilter($filter);
         }
 
-        return $manager;
+        return $filesystem;
     }
 
-    public function getManagerNames()
+    public function getFilesystemNames()
     {
-        return array_keys($this->managers);
+        return array_keys($this->filesystems);
     }
 
     public function getDefaultLayout()

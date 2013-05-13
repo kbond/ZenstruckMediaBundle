@@ -20,7 +20,7 @@
         "zenstruck/slugify-bundle": "~1.0"
     },
     "suggest": {
-        "zenstruck/slugify-bundle": "For the SlugableFilenameFilter"
+        "zenstruck/slugify-bundle": "For the SlugifyFilenameFilter"
     },
     "autoload": {
         "psr-0": { "Zenstruck\\MediaBundle": "" }
