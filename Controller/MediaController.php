@@ -19,9 +19,6 @@ use Zenstruck\MediaBundle\Media\FilesystemFactory;
  */
 class MediaController
 {
-    const ALERT_ERROR   = 'error';
-    const ALERT_SUCCESS = 'success';
-
     protected $factory;
     protected $templating;
     protected $router;
@@ -70,7 +67,7 @@ class MediaController
         try {
             $filesystem = $this->factory->getFilesystem($request);
         } catch (DirectoryNotFoundException $e) {
-            return $this->getMessageResponse(sprintf('Directory "%s" not found.', $request->query->get('path')), 404);
+            return $this->getMessageResponse(sprintf('Directory "%s" not found.', $request->query->get('path')), $e->getCode());
         }
 
         $files = $filesystem->getFiles();
@@ -88,10 +85,10 @@ class MediaController
             $filesystem = $this->factory->getFilesystem($request);
             $message = $filesystem->uploadFile($request->files->get('file'));
         } catch (Exception $e) {
-            return $this->getMessageResponse($e->getMessage(), 400);
+            return $this->getMessageResponse($e->getMessage(), $e->getCode());
         }
 
-        return $this->getMessageResponse($message);
+        return $this->getMessageResponse($message, 201);
     }
 
     public function deleteAction(Request $request)
@@ -102,7 +99,7 @@ class MediaController
             $filesystem = $this->factory->getFilesystem($request);
             $message = $filesystem->delete($filename);
         } catch(Exception $e) {
-            return $this->getMessageResponse($e->getMessage(), 400);
+            return $this->getMessageResponse($e->getMessage(), $e->getCode());
         }
 
         return $this->getMessageResponse($message);
@@ -118,10 +115,10 @@ class MediaController
             $message = $filesystem->rename($oldName, $newName);
 
         } catch (Exception $e) {
-            return $this->getMessageResponse($e->getMessage(), 400);
+            return $this->getMessageResponse($e->getMessage(), $e->getCode());
         }
 
-        return $this->getMessageResponse($message);
+        return $this->getMessageResponse($message, 200);
     }
 
     public function mkdirAction(Request $request)
@@ -130,13 +127,13 @@ class MediaController
             $filesystem = $this->factory->getFilesystem($request);
             $message = $filesystem->mkdir($request->query->get('dir_name'));
         } catch (Exception $e) {
-            return $this->getMessageResponse($e->getMessage(), 400);
+            return $this->getMessageResponse($e->getMessage(), $e->getCode());
         }
 
         return $this->getMessageResponse($message);
     }
 
-    protected function getMessageResponse($message, $statusCode = 201)
+    protected function getMessageResponse($message, $statusCode = 200)
     {
         return new JsonResponse(array('message' => $message), $statusCode);
     }
