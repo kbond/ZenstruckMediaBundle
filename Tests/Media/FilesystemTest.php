@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Zenstruck\MediaBundle\Media\Filesystem;
 use Zenstruck\MediaBundle\Media\Filter\SlugifyFilenameFilter;
+use Zenstruck\MediaBundle\Media\Permission\BooleanPermissionProvider;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -25,7 +26,7 @@ class FilesystemTest extends BaseFilesystemTest
 
     public function testWorkingDirWithoutSlash()
     {
-        $filesystem = new Filesystem('default', 'copy/A', sys_get_temp_dir().'/Fixtures', '/files');
+        $filesystem = new Filesystem('default', 'copy/A', sys_get_temp_dir().'/Fixtures', '/files', new BooleanPermissionProvider());
         $this->assertEquals($this->getTempFixtureDir().'copy/A/', $filesystem->getWorkingDir());
     }
 
@@ -48,7 +49,7 @@ class FilesystemTest extends BaseFilesystemTest
             $this->markTestSkipped('Skip on windows.');
         }
 
-        $filesystem = new Filesystem('default', null, '/', '/');
+        $filesystem = new Filesystem('default', null, '/', '/', new BooleanPermissionProvider());
 
         $this->assertFalse($filesystem->isWritable());
     }
@@ -114,6 +115,28 @@ class FilesystemTest extends BaseFilesystemTest
         $this->assertTrue(is_dir($this->getTempFixtureDir().'A/Foo'));
     }
 
+    public function testRenameFileNoPermission()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\AccessDeniedException',
+            'You do not have the required permissions to rename files.'
+        );
+
+        $filesystem = $this->createFilesystem(null, null, '/files', null, false);
+        $filesystem->rename('dolor.txt', 'foo.txt');
+    }
+
+    public function testRenameDirNoPermission()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\AccessDeniedException',
+            'You do not have the required permissions to rename directories.'
+        );
+
+        $filesystem = $this->createFilesystem(null, null, '/files', null, false);
+        $filesystem->rename('A', 'B');
+    }
+
     public function testRenameFileNotFound()
     {
         $this->setExpectedException(
@@ -161,6 +184,28 @@ class FilesystemTest extends BaseFilesystemTest
         $this->assertFileNotExists($this->getTempFixtureDir().'A/B');
     }
 
+    public function testDeleteFileNoPermission()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\AccessDeniedException',
+            'You do not have the required permissions to delete files.'
+        );
+
+        $filesystem = $this->createFilesystem(null, null, '/files', null, false);
+        $filesystem->delete('dolor.txt');
+    }
+
+    public function testDeleteDirNoPermission()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\AccessDeniedException',
+            'You do not have the required permissions to delete directories.'
+        );
+
+        $filesystem = $this->createFilesystem(null, null, '/files', null, false);
+        $filesystem->delete('A');
+    }
+
     public function testDeleteFileNotFound()
     {
         $this->setExpectedException(
@@ -185,6 +230,17 @@ class FilesystemTest extends BaseFilesystemTest
         $filesystem->mkdir('foo');
         $this->assertFileExists($this->getTempFixtureDir().'A/foo');
         $this->assertTrue(is_dir($this->getTempFixtureDir().'A/foo'));
+    }
+
+    public function testMkdirNoPermission()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\AccessDeniedException',
+            'You do not have the required permissions to create directories.'
+        );
+
+        $filesystem = $this->createFilesystem(null, null, '/files', null, false);
+        $filesystem->mkdir('A');
     }
 
     public function testMkdirNoName()
@@ -227,6 +283,21 @@ class FilesystemTest extends BaseFilesystemTest
         $this->assertFileNotExists($this->getTempFixtureDir().'A/foo.txt');
         $filesystem->uploadFile($file);
         $this->assertFileExists($this->getTempFixtureDir().'A/foo.txt');
+    }
+
+    public function testUploadFileNoPermission()
+    {
+        $this->setExpectedException(
+            'Zenstruck\MediaBundle\Exception\AccessDeniedException',
+            'You do not have the required permissions to upload files.'
+        );
+
+        $filesystem = $this->createFilesystem(null, null, '/files', null, false);
+        $tempFile = sys_get_temp_dir().'/foo.txt';
+        touch($tempFile);
+        $file = new UploadedFile($tempFile, 'foo.txt', null, null, null, true);
+
+        $filesystem->uploadFile($file);
     }
 
     public function testUploadFileExists()

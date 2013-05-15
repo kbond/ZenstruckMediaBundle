@@ -5,15 +5,20 @@ namespace Zenstruck\MediaBundle\Media;
 use Symfony\Component\Filesystem\Filesystem as BaseFilesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Zenstruck\MediaBundle\Exception\AccessDeniedException;
 use Zenstruck\MediaBundle\Exception\DirectoryNotFoundException;
 use Zenstruck\MediaBundle\Exception\Exception;
 use Zenstruck\MediaBundle\Media\Filter\FilenameFilterInterface;
+use Zenstruck\MediaBundle\Media\Permission\PermissionProviderInterface;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 class Filesystem
 {
+    const TYPE_FILE = 'file';
+    const TYPE_DIR  = 'dir';
+
     protected $name;
     protected $path;
     protected $rootDir;
@@ -26,7 +31,9 @@ class Filesystem
     protected $workingDir;
     protected $allowedExtensions = array();
 
-    public function __construct($name, $path, $rootDir, $webPrefix, $allowedExtensions = null)
+    protected $permissions;
+
+    public function __construct($name, $path, $rootDir, $webPrefix, PermissionProviderInterface $permissions, $allowedExtensions = null)
     {
         // check for .. - user is trying to access invalid directories
         if (preg_match('#\.\.#', $path)) {
@@ -46,6 +53,8 @@ class Filesystem
             $this->allowedExtensions = array_map('trim', explode(',', $allowedExtensions));
         }
 
+        $this->permissions = $permissions;
+
         if (!is_dir($this->workingDir)) {
             throw new DirectoryNotFoundException(sprintf('Directory "%s" not found.', $this->workingDir));
         }
@@ -54,6 +63,11 @@ class Filesystem
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getPermissions()
+    {
+        return $this->permissions;
     }
 
     public function addFilenameFilter(FilenameFilterInterface $filter)
@@ -128,12 +142,19 @@ class Filesystem
             throw new Exception(sprintf('The file/directory "%s" does not exist.', $oldName));
         }
 
-        $type = is_dir($oldFile) ? 'directory' : 'file';
+        $type = is_dir($oldFile) ? self::TYPE_DIR : self::TYPE_FILE;
+
+        // check permissions
+        if (self::TYPE_FILE === $type && !$this->permissions->canRenameFile()) {
+            throw new AccessDeniedException('You do not have the required permissions to rename files.');
+        } elseif (self::TYPE_DIR === $type && !$this->permissions->canRenameDir()) {
+            throw new AccessDeniedException('You do not have the required permissions to rename directories.');
+        }
 
         // run filters on filename
         $newName = $this->filterFilename(pathinfo($newName, PATHINFO_FILENAME));
 
-        if ('file' === $type) {
+        if (self::TYPE_FILE === $type) {
             // don't let user change extension
             $newName = $newName.'.'.strtolower(pathinfo($oldName, PATHINFO_EXTENSION));
         }
@@ -176,7 +197,14 @@ class Filesystem
             throw new Exception(sprintf('No file/directory named "%s".', $filename));
         }
 
-        $type = is_dir($file) ? 'directory' : 'file';
+        $type = is_dir($file) ? self::TYPE_DIR : self::TYPE_FILE;
+
+        // check permissions
+        if (self::TYPE_FILE === $type && !$this->permissions->canDeleteFile()) {
+            throw new AccessDeniedException('You do not have the required permissions to delete files.');
+        } elseif (self::TYPE_DIR === $type && !$this->permissions->canDeleteDir()) {
+            throw new AccessDeniedException('You do not have the required permissions to delete directories.');
+        }
 
         try {
             $this->filesystem->remove($file);
@@ -196,6 +224,11 @@ class Filesystem
      */
     public function mkdir($dirName)
     {
+        // check permissions
+        if (!$this->permissions->canMkDir()) {
+            throw new AccessDeniedException('You do not have the required permissions to create directories.');
+        }
+
         if (!$dirName) {
             throw new Exception('You didn\'t enter a directory name.');
         }
@@ -226,6 +259,11 @@ class Filesystem
      */
     public function uploadFile(UploadedFile $file)
     {
+        // check permissions
+        if (!$this->permissions->canUploadFile()) {
+            throw new AccessDeniedException('You do not have the required permissions to upload files.');
+        }
+
         $filename = $this->filterFilename(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
         $extension = strtolower(pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION));
 

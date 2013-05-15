@@ -70,7 +70,10 @@ class FilesystemFactory
         }
 
         /** @var Filesystem $filesystem */
-        $filesystem = new $this->filesystemClass($name, $path, $config['root_dir'], $config['web_prefix'], $config['allowed_extensions']);
+        $filesystem = new $this->filesystemClass(
+            $name, $path, $config['root_dir'], $config['web_prefix'],
+            $this->permissions, $config['allowed_extensions']
+        );
 
         foreach ($this->filenameFilters as $filter) {
             $filesystem->addFilenameFilter($filter);
