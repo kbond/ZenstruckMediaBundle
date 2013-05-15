@@ -14,19 +14,17 @@ use Zenstruck\MediaBundle\Media\Permission\BooleanPermissionProvider;
 class FilesystemFactory
 {
     protected $permissions;
-    protected $defaultLayout;
     protected $filesystemClass;
     protected $filenameFilters = array();
     protected $filesystems = array();
 
-    public function __construct($defaultLayout, $filesystemClass = 'Zenstruck\MediaBundle\Media\Filesystem', PermissionProviderInterface $permissions = null)
+    public function __construct($filesystemClass = 'Zenstruck\MediaBundle\Media\Filesystem', PermissionProviderInterface $permissions = null)
     {
         if (!$permissions) {
             $permissions = new BooleanPermissionProvider();
         }
 
         $this->filesystemClass = $filesystemClass;
-        $this->defaultLayout = $defaultLayout;
         $this->permissions = $permissions;
     }
 
@@ -84,10 +82,5 @@ class FilesystemFactory
     public function getFilesystemNames()
     {
         return array_keys($this->filesystems);
-    }
-
-    public function getDefaultLayout()
-    {
-        return $this->defaultLayout;
     }
 }

@@ -13,13 +13,13 @@ class FilesystemFactoryTest extends BaseFilesystemTest
     public function testAddManagerBadConfig()
     {
         $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\MissingOptionsException');
-        $factory = new FilesystemFactory('foo');
+        $factory = new FilesystemFactory();
         $factory->addFilesystem('default', array());
     }
 
     public function testGetFilesystem()
     {
-        $factory = new FilesystemFactory('foo');
+        $factory = new FilesystemFactory();
         $factory->addFilesystem('default', array(
                 'root_dir' => '/tmp',
                 'web_prefix' => '/files'

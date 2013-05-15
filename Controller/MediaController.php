@@ -19,18 +19,21 @@ use Zenstruck\MediaBundle\Media\FilesystemFactory;
  */
 class MediaController
 {
+    protected $defaultLayout;
     protected $factory;
     protected $templating;
     protected $router;
     protected $serializer;
 
     public function __construct(
+        $defaultLayout,
         FilesystemFactory $factory,
         EngineInterface $templating,
         UrlGeneratorInterface $router,
         Serializer $serializer = null
     )
     {
+        $this->defaultLayout = $defaultLayout;
         $this->factory = $factory;
         $this->templating = $templating;
         $this->router = $router;
@@ -56,7 +59,7 @@ class MediaController
         return new Response($this->templating->render('ZenstruckMediaBundle:Twitter:index.html.twig', array(
                 'filesystem' => $filesystem,
                 'filesystems' => $this->factory->getFilesystemNames(),
-                'default_layout' => $this->factory->getDefaultLayout(),
+                'default_layout' => $this->defaultLayout,
                 'opener' => $opener,
                 'opener_param' => $openerParam
             )));

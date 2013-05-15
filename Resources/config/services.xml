@@ -11,10 +11,10 @@
 
     <services>
         <service id="zenstruck_media.filesystem_factory" class="%zenstruck_media.filesystem_factory.class%">
-            <argument>%zenstruck_media.default_layout%</argument>
             <argument>%zenstruck_media.filesystem.class%</argument>
         </service>
         <service id="zenstruck_media.controller" class="%zenstruck_media.controller.class%">
+            <argument>%zenstruck_media.default_layout%</argument>
             <argument type="service" id="zenstruck_media.filesystem_factory" />
             <argument type="service" id="templating" />
             <argument type="service" id="router" />
