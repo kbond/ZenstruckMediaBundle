@@ -25,10 +25,14 @@
                     </div>
                 </div>
                 <div class="btn-group">
-                    <a href="" class="btn btn-small" title="Refresh" ng-click="refresh()"><i class="icon-refresh"></i></a>
+                    <a href="" class="btn btn-small" title="Refresh" ng-click="refresh()">
+                        <i class="icon-refresh"></i>
+                    </a>
                 </div>
                 <div class="btn-group">
-                    <a class="btn btn-small" data-toggle="modal" href="#zenstruck-media-mkdir"><i class="icon-folder-open"></i> New</a>
+                    <a class="btn btn-small" ng-click="openMkdirDialog()" href="">
+                        <i class="icon-folder-open"></i> New
+                    </a>
                 </div>
             </div>
 

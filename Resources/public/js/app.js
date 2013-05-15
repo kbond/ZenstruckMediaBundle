@@ -31,20 +31,6 @@ angular.module('ZenstruckMedia', [])
             })
         ;
 
-        // setup rename dialog
-        var $renameDialog = $('#zenstruck-media-rename');
-        $renameDialog.on('shown', function() {
-            $(this).find('input').first().focus(function() {
-                this.select();
-            }).focus();
-        });
-
-        // setup mkdir dialog
-        var $mkdirDialog = $('#zenstruck-media-mkdir');
-        $mkdirDialog.on('shown', function() {
-            $(this).find('input').first().focus();
-        });
-
         return {
             routes: {
                 list_url: $el.data('list-url'),
@@ -53,8 +39,7 @@ angular.module('ZenstruckMedia', [])
                 rename_url: $el.data('rename-url')
             },
             opener: $el.data('opener'),
-            opener_param: $el.data('opener-param'),
-            $renameDialog: $renameDialog
+            opener_param: $el.data('opener-param')
         }
     })
 ;
@@ -63,7 +48,7 @@ angular.module('ZenstruckMedia', [])
  * Controllers
  */
 function listCtrl($scope, $routeParams, $http, Config) {
-    // properties
+    // public properties
     $scope.path = $routeParams.path ? $routeParams.path : '';
     $scope.ancestors = $scope.path.split('/');
     $scope.new_dir_name = '';
@@ -75,11 +60,25 @@ function listCtrl($scope, $routeParams, $http, Config) {
     $scope.pathHistory = [];
     $scope.alert = { message: '', 'type': 'success'};
 
+    // private properties
+    var $renameDialog = $('#zenstruck-media-rename');
+    var $mkdirDialog = $('#zenstruck-media-mkdir');
+
     // setup history paths
     var history_paths = [];
     $scope.ancestors.forEach(function(item) {
         history_paths.push(item);
         $scope.pathHistory.push({ name: item, path: history_paths.join('/') });
+    });
+
+    // setup autofocus
+    $renameDialog.on('shown', function() {
+        $(this).find('input').first().focus(function() {
+            this.select();
+        }).focus();
+    });
+    $mkdirDialog.on('shown', function() {
+        $(this).find('input').first().focus();
     });
 
     $scope.refresh = function() {
@@ -93,10 +92,14 @@ function listCtrl($scope, $routeParams, $http, Config) {
         ;
     };
 
+    $scope.openMkdirDialog = function() {
+        $mkdirDialog.modal('show');
+    };
+
     $scope.openRenameDialog = function(file) {
         $scope.rename_old = file;
         $scope.rename_new = file.filename;
-        Config.$renameDialog.modal('show');
+        $renameDialog.modal('show');
     };
 
     $scope.rename = function() {
