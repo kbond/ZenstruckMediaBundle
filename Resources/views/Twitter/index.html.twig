@@ -1,4 +1,4 @@
-{% extends 'ZenstruckMediaBundle:Twitter:default_layout.html.twig' %}
+{% extends layout ? layout : default_layout %}
 
 {% block title %}Media Manager{% endblock %}
 
@@ -9,6 +9,7 @@
          data-delete-url="{{ path('zenstruck_media_delete') }}"
          data-rename-url="{{ path('zenstruck_media_rename') }}"
          data-upload-url="{{ path('zenstruck_media_upload') }}"
+         data-filesystem="{{ filesystem.name }}"
          data-opener="{{ opener }}"
          data-opener-param="{{ opener_param }}"
     >
@@ -26,6 +27,21 @@
                         <span>[[ current_dir ]]</span>
                     </div>
                 </div>
+                {% if filesystems|length > 1 and not lock %}
+                    <div class="btn-group">
+                        <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+                            Filesystem: {{ filesystem.name }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for system in filesystems %}
+                                {% if system != filesystem.name %}
+                                    <li><a href="{{ path('zenstruck_media_index', { 'filesystem': system }) }}">Filesystem: {{ system }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
                 <div class="btn-group">
                     <a href="" class="btn btn-small" title="Refresh" ng-click="refresh()">
                         <i class="icon-refresh"></i>
@@ -41,7 +57,7 @@
                 </div>
                 <div class="btn-group">
                     <div class="input-append">
-                        <input class="btn-input" ng-model="filter" type="text" placeholder="Filter" />
+                        <input class="btn-input" ng-model="filter.filename" type="text" placeholder="Filter" />
                         <button class="btn btn-small" ng-click="filter = ''" type="button"><i class="icon-remove"></i></button>
                     </div>
 
@@ -137,7 +153,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3>Upload</h3>
                 </div>
-                <form ng-upload action="{{ path('zenstruck_media_upload') }}" class="form-horizontal">
+                <form ng-upload action="[[ upload_url ]]" class="form-horizontal">
                     <div class="modal-body">
                         <label class="control-label" for="zenstruck-media-upload-file">Select a file</label>
                         <div class="controls">

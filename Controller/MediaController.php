@@ -50,6 +50,12 @@ class MediaController
 
         $opener = $request->query->get('opener');
         $openerParam = $request->query->get('opener_param');
+        $lock = $request->query->has('lock');
+        $layout = $request->query->get('layout');
+
+        if ($layout) {
+            $layout = sprintf('ZenstruckMediaBundle:Twitter:%s.html.twig', $layout);
+        }
 
         if (!$opener && $param = $request->query->get('CKEditorFuncNum')) {
             $opener = 'ckeditor';
@@ -60,8 +66,10 @@ class MediaController
                 'filesystem' => $filesystem,
                 'filesystems' => $this->factory->getFilesystemNames(),
                 'default_layout' => $this->defaultLayout,
+                'layout' => $layout,
                 'opener' => $opener,
-                'opener_param' => $openerParam
+                'opener_param' => $openerParam,
+                'lock' => $lock
             )));
     }
 

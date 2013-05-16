@@ -39,6 +39,7 @@ angular.module('ZenstruckMedia', ['ngUpload'])
                 rename_url: $el.data('rename-url'),
                 upload_url: $el.data('upload-url')
             },
+            filesystem: $el.data('filesystem'),
             opener: $el.data('opener'),
             opener_param: $el.data('opener-param')
         }
@@ -48,7 +49,7 @@ angular.module('ZenstruckMedia', ['ngUpload'])
 /**
  * Controllers
  */
-function listCtrl($scope, $routeParams, $http, Config) {
+var listCtrl = ['$scope', '$routeParams', '$http', 'Config', function($scope, $routeParams, $http, Config) {
     // public properties
     $scope.path = $routeParams.path ? $routeParams.path : '';
     $scope.ancestors = $scope.path.split('/');
@@ -60,6 +61,7 @@ function listCtrl($scope, $routeParams, $http, Config) {
     $scope.files = [];
     $scope.pathHistory = [];
     $scope.alert = { message: '', 'type': 'success'};
+    $scope.upload_url = Config.routes.upload_url + '?filesystem=' + Config.filesystem + '&path=' + $scope.path;
 
     // private properties
     var $renameDialog = $('#zenstruck-media-rename');
@@ -86,8 +88,19 @@ function listCtrl($scope, $routeParams, $http, Config) {
         $(this).find('input').first().val('');
     });
 
+    var buildHttpParams = function(params) {
+        if (!params) {
+            params = {};
+        }
+
+        params.path = $scope.path;
+        params.filesystem = Config.filesystem;
+
+        return params;
+    };
+
     $scope.refresh = function() {
-        $http.get(Config.routes.list_url, { params: {path: $scope.path } })
+        $http.get(Config.routes.list_url, { params: buildHttpParams() })
             .success(function(data) {
                 $scope.files = data;
             })
@@ -113,12 +126,10 @@ function listCtrl($scope, $routeParams, $http, Config) {
 
     $scope.rename = function() {
         $http.put(Config.routes.rename_url, {}, {
-            params: {
-                path: $scope.path,
-                type: $scope.rename_old.type,
+            params: buildHttpParams({
                 old_name: $scope.rename_old.filename,
                 new_name: $scope.rename_new
-            }
+            })
         })
         .success(function(data) {
             $scope.setAlert(data.message);
@@ -141,11 +152,9 @@ function listCtrl($scope, $routeParams, $http, Config) {
 
     $scope.delete = function(file) {
         $http.delete(Config.routes.delete_url, {
-            params: {
-                path: $scope.path,
-                type: file.type,
+            params: buildHttpParams({
                 filename: file.filename
-            }
+            })
         })
         .success(function(data) {
             $scope.setAlert(data.message);
@@ -163,10 +172,9 @@ function listCtrl($scope, $routeParams, $http, Config) {
         }
 
         $http.post(Config.routes.mkdir_url, {}, {
-                params: {
-                    path: $scope.path,
+                params: buildHttpParams({
                     dir_name: $scope.new_dir_name
-                }
+                })
             })
             .success(function(data) {
                 $scope.setAlert(data.message);
@@ -216,4 +224,4 @@ function listCtrl($scope, $routeParams, $http, Config) {
     };
 
     $scope.refresh();
-}
+}];

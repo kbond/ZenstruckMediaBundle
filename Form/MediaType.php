@@ -29,7 +29,8 @@ class MediaType extends AbstractType
             try {
                 $url = $this->router->generate('zenstruck_media_index', array(
                         'opener' => 'media-widget',
-                        'filesystem' => $options['filesystem']
+                        'filesystem' => $options['filesystem'],
+                        'layout' => $options['layout']
                     ));
             } catch (RouteNotFoundException $e) {
                 throw new \Exception('The route "zenstruck_media_index" is not enabled.');
@@ -43,7 +44,8 @@ class MediaType extends AbstractType
     {
         $resolver->setDefaults(array(
                 'media_url' => null,
-                'filesystem' => null
+                'filesystem' => null,
+                'layout' => 'popup'
             ));
     }
 

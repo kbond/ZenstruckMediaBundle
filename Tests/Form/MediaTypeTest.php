@@ -21,7 +21,7 @@ class MediaTypeTest extends BaseFilesystemTest
         )->createView();
 
         $this->assertTrue($formView instanceof FormView);
-        $this->assertEquals('/media/?opener=media-widget', $formView->vars['media_url']);
+        $this->assertEquals('/media/?opener=media-widget&layout=popup', $formView->vars['media_url']);
     }
 
     public function testCustomFilesystem()
@@ -36,7 +36,7 @@ class MediaTypeTest extends BaseFilesystemTest
             )
         )->createView();
 
-        $this->assertEquals('/media/?opener=media-widget&filesystem=foo', $formView->vars['media_url']);
+        $this->assertEquals('/media/?opener=media-widget&filesystem=foo&layout=popup', $formView->vars['media_url']);
     }
 
     public function testCustomUrl()
