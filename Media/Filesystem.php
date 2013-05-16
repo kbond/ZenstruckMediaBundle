@@ -70,6 +70,11 @@ class Filesystem
         return $this->permissions;
     }
 
+    public function getAllowedExtensions()
+    {
+        return $this->allowedExtensions;
+    }
+
     public function addFilenameFilter(FilenameFilterInterface $filter)
     {
         $this->filenameFilters[] = $filter;

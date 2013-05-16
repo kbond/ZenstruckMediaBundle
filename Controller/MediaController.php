@@ -138,6 +138,6 @@ class MediaController
 
     protected function getMessageResponse($message, $statusCode = 200)
     {
-        return new JsonResponse(array('message' => $message), $statusCode);
+        return new JsonResponse(array('message' => $message, 'code' => $statusCode), $statusCode);
     }
 }

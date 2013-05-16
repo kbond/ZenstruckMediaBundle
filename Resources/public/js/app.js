@@ -3,7 +3,7 @@
 /**
  * App
  */
-angular.module('ZenstruckMedia', [])
+angular.module('ZenstruckMedia', ['ngUpload'])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider
             .when('/', {templateUrl: 'list.html', controller: listCtrl})
@@ -36,7 +36,8 @@ angular.module('ZenstruckMedia', [])
                 list_url: $el.data('list-url'),
                 mkdir_url: $el.data('mkdir-url'),
                 delete_url: $el.data('delete-url'),
-                rename_url: $el.data('rename-url')
+                rename_url: $el.data('rename-url'),
+                upload_url: $el.data('upload-url')
             },
             opener: $el.data('opener'),
             opener_param: $el.data('opener-param')
@@ -63,6 +64,7 @@ function listCtrl($scope, $routeParams, $http, Config) {
     // private properties
     var $renameDialog = $('#zenstruck-media-rename');
     var $mkdirDialog = $('#zenstruck-media-mkdir');
+    var $uploadDialog = $('#zenstruck-media-upload');
 
     // setup history paths
     var history_paths = [];
@@ -79,6 +81,9 @@ function listCtrl($scope, $routeParams, $http, Config) {
     });
     $mkdirDialog.on('shown', function() {
         $(this).find('input').first().focus();
+    });
+    $uploadDialog.on('shown', function() {
+        $(this).find('input').first().val('');
     });
 
     $scope.refresh = function() {
@@ -102,6 +107,10 @@ function listCtrl($scope, $routeParams, $http, Config) {
         $renameDialog.modal('show');
     };
 
+    $scope.openUploadDialog = function() {
+        $uploadDialog.modal('show');
+    };
+
     $scope.rename = function() {
         $http.put(Config.routes.rename_url, {}, {
             params: {
@@ -118,6 +127,16 @@ function listCtrl($scope, $routeParams, $http, Config) {
         .error(function(data) {
             $scope.setAlert(data.message, 'error');
         })
+    };
+
+    $scope.upload = function(content, completed) {
+        if (completed && content.length > 0) {
+            var response = JSON.parse(content);
+            $scope.setAlert(response.message, response.code == 201 ? 'success' : 'error');
+            $scope.refresh();
+
+            $uploadDialog.modal('hide');
+        }
     };
 
     $scope.delete = function(file) {
