@@ -39,6 +39,13 @@
                         <i class="icon-folder-open"></i> New
                     </a>
                 </div>
+                <div class="btn-group">
+                    <div class="input-append">
+                        <input class="btn-input" ng-model="filter" type="text" placeholder="Filter" />
+                        <button class="btn btn-small" ng-click="filter = ''" type="button"><i class="icon-remove"></i></button>
+                    </div>
+
+                </div>
             </div>
 
             <div ng-show="alert.message" class="alert alert-[[ alert.type ]]">
@@ -59,7 +66,7 @@
                         <span class="zenstruck-media-thumbnail-caption">...</span>
                     </a>
                 </li>
-                <li class="span2" ng-repeat="file in files" ng-switch="file.type">
+                <li class="span2" ng-repeat="file in files | filter:filter" ng-switch="file.type">
                     <div class="zenstruck-media-actions hide">
                         <a title="Rename" ng-click="openRenameDialog(file)" href="" class="btn btn-mini zenstruck-media-rename"><i class="icon-edit"></i></a>
                         <a title="Delete" ng-click="delete(file)" class="btn btn-mini btn-danger" href=""><i class="icon-trash icon-white"></i></a>
