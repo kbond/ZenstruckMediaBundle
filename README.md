@@ -15,16 +15,16 @@ Provides a simple media/file management GUI for Symfony2:
 
 1. Add to your `composer.json`:
 
-    composer require zenstruck/media-bundle
+        composer require zenstruck/media-bundle
 
 2. Download and install the AngularJS module [ngUpload][3] to your `web/vendor` folder. I suggest using
    [Bower][4]:
 
-    bower install ngUpload
+        bower install ngUpload
 
 3. *Optional*  If using the slugify filename feature, add [zenstruck/slugify-bundle][5] to your composer.json
 
-    composer require zenstruck/slugify-bundle
+        composer require zenstruck/slugify-bundle
 
 4. Register the bundle with Symfony2:
 
