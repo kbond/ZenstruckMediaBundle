@@ -23,6 +23,7 @@
                     <div class="btn-text">
                         / <span ng-show="path"><a href="#/"><em>root</em></a> /</span>
                         <span ng-repeat="ancestor in pathHistory"><a href="#/?path=[[ ancestor.path ]]">[[ ancestor.name ]]</a> / </span>
+                        <span>[[ current_dir ]]</span>
                     </div>
                 </div>
                 <div class="btn-group">

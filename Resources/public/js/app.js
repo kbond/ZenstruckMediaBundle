@@ -55,7 +55,7 @@ function listCtrl($scope, $routeParams, $http, Config) {
     $scope.new_dir_name = '';
     $scope.rename_old = null;
     $scope.rename_new = '';
-    $scope.ancestors.pop();
+    $scope.current_dir = $scope.ancestors.pop();
     $scope.prevPath = $scope.ancestors.join('/');
     $scope.files = [];
     $scope.pathHistory = [];
