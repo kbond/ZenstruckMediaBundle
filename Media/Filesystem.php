@@ -62,7 +62,7 @@ class Filesystem
         $this->fileServe    = $fileServe;
 
         if ($secure === true && !$this->fileServe) {
-            throw new Exception("You can't use secure file download without IgorwFileServeBundle")
+            throw new Exception("You can't use secure file download without IgorwFileServeBundle");
         }
 
         if (!is_dir($this->workingDir)) {
