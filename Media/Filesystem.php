@@ -139,6 +139,11 @@ class Filesystem
 
     public function get($filename)
     {
+        // check permissions
+        if (!$this->permissions->canReadFile()) {
+            throw new AccessDeniedException('You do not have the required permissions to read files.');
+        }
+
         $file = $this->workingDir.$filename;
 
         if (!is_file($file)) {

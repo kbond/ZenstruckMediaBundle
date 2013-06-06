@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException as SymfonyAccessDeniedException;
+use Zenstruck\MediaBundle\Exception\AccessDeniedException;
 use Zenstruck\MediaBundle\Exception\DirectoryNotFoundException;
 use Zenstruck\MediaBundle\Exception\Exception;
 use Zenstruck\MediaBundle\Exception\FileNotFoundException;
@@ -156,6 +158,8 @@ class MediaController
             $file = $filesystem->get($request->get('file'));
         } catch (FileNotFoundException $e) {
             throw new NotFoundHttpException($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            throw new SymfonyAccessDeniedException($e->getMessage());
         }
 
         $file = new File($file);
