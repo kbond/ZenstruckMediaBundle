@@ -37,7 +37,7 @@ class Filesystem
     protected $fileServe;
     protected $secure;
 
-    public function __construct($name, $path, $rootDir, $webPrefix, $secure, PermissionProviderInterface $permissions, $allowedExtensions = null, AbstractResponseFactory $fileServe)
+    public function __construct($name, $path, $rootDir, $webPrefix, $secure, PermissionProviderInterface $permissions, $allowedExtensions = null, AbstractResponseFactory $fileServe = null)
     {
         // check for .. - user is trying to access invalid directories
         if (preg_match('#\.\.#', $path)) {
