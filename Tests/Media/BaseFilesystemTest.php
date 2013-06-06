@@ -29,11 +29,11 @@ abstract class BaseFilesystemTest extends WebTestCase
     }
 
     protected function createFilesystem(
-        $path = null, $rootDir = null, $webPrefix = '/files', $allowedExtensions = null, $permission = true
+        $path = null, $rootDir = null, $webPrefix = '/files', $allowedExtensions = null, $permission = true, $secure = true
     )
     {
         return new Filesystem('default', $path, $this->getTempFixtureDir().$rootDir,
-            $webPrefix, new BooleanPermissionProvider($permission), $allowedExtensions
+            $webPrefix, $secure, new BooleanPermissionProvider($permission), $allowedExtensions
         );
     }
 
