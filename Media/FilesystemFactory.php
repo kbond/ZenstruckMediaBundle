@@ -7,6 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Zenstruck\MediaBundle\Media\Filter\FilenameFilterInterface;
 use Zenstruck\MediaBundle\Media\Permission\PermissionProviderInterface;
 use Zenstruck\MediaBundle\Media\Permission\BooleanPermissionProvider;
+use Igorw\FileServeBundle\Response\AbstractResponseFactory;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -15,17 +16,19 @@ class FilesystemFactory
 {
     protected $permissions;
     protected $filesystemClass;
+    protected $fileServe;
     protected $filenameFilters = array();
     protected $filesystems = array();
 
-    public function __construct($filesystemClass = 'Zenstruck\MediaBundle\Media\Filesystem', PermissionProviderInterface $permissions = null)
+    public function __construct($filesystemClass = 'Zenstruck\MediaBundle\Media\Filesystem', AbstractResponseFactory $fileServe = null, PermissionProviderInterface $permissions = null)
     {
         if (!$permissions) {
             $permissions = new BooleanPermissionProvider();
         }
 
-        $this->filesystemClass = $filesystemClass;
-        $this->permissions = $permissions;
+        $this->filesystemClass  = $filesystemClass;
+        $this->permissions      = $permissions;
+        $this->fileServe        = $fileServe;
     }
 
     public function addFilenameFilter(FilenameFilterInterface $filter)
@@ -42,7 +45,8 @@ class FilesystemFactory
             )
         );
         $resolver->setDefaults(array(
-                'allowed_extensions' => null
+                'allowed_extensions' => null,
+                'secure' => false
             )
         );
 
@@ -71,8 +75,8 @@ class FilesystemFactory
 
         /** @var Filesystem $filesystem */
         $filesystem = new $this->filesystemClass(
-            $name, $path, $config['root_dir'], $config['web_prefix'],
-            $this->permissions, $config['allowed_extensions']
+            $name, $path, $config['root_dir'], $config['web_prefix'], $config['secure'],
+            $this->permissions, $config['allowed_extensions'], $this->fileServe
         );
 
         foreach ($this->filenameFilters as $filter) {

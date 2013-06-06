@@ -5,11 +5,13 @@ namespace Zenstruck\MediaBundle\Media;
 use Symfony\Component\Filesystem\Filesystem as BaseFilesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File as BaseFile;
 use Zenstruck\MediaBundle\Exception\AccessDeniedException;
 use Zenstruck\MediaBundle\Exception\DirectoryNotFoundException;
 use Zenstruck\MediaBundle\Exception\Exception;
 use Zenstruck\MediaBundle\Media\Filter\FilenameFilterInterface;
 use Zenstruck\MediaBundle\Media\Permission\PermissionProviderInterface;
+use Igorw\FileServeBundle\Response\AbstractResponseFactory;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -32,8 +34,10 @@ class Filesystem
     protected $allowedExtensions = array();
 
     protected $permissions;
+    protected $fileServe;
+    protected $secure;
 
-    public function __construct($name, $path, $rootDir, $webPrefix, PermissionProviderInterface $permissions, $allowedExtensions = null)
+    public function __construct($name, $path, $rootDir, $webPrefix, $secure, PermissionProviderInterface $permissions, $allowedExtensions = null, AbstractResponseFactory $fileServe)
     {
         // check for .. - user is trying to access invalid directories
         if (preg_match('#\.\.#', $path)) {
@@ -53,7 +57,9 @@ class Filesystem
             $this->allowedExtensions = array_map('trim', explode(',', $allowedExtensions));
         }
 
-        $this->permissions = $permissions;
+        $this->permissions  = $permissions;
+        $this->secure       = $secure;
+        $this->fileServe    = $fileServe;
 
         if (!is_dir($this->workingDir)) {
             throw new DirectoryNotFoundException(sprintf('Directory "%s" not found.', $this->workingDir));
@@ -88,6 +94,11 @@ class Filesystem
     public function getWorkingDir()
     {
         return $this->workingDir;
+    }
+
+    public function getFileServe()
+    {
+        return $this->fileServe;
     }
 
     public function isWritable()
@@ -211,13 +222,40 @@ class Filesystem
             throw new AccessDeniedException('You do not have the required permissions to delete directories.');
         }
 
-        try {
-            $this->filesystem->remove($file);
-        } catch (\Exception $e) {
-            throw new Exception(sprintf('Error deleting %s "%s".  Check permissions.', $type, $filename));
+        return array();
+    }
+
+    /**
+     * @param $filename
+     *
+     * @return string
+     *
+     * @throws \Zenstruck\MediaBundle\Exception\Exception
+     */
+    public function downloadFile($filename)
+    {
+        if (!$filename) {
+            throw new Exception('No file/directory specified.');
         }
 
-        return sprintf('%s "%s" deleted.', ucfirst($type), $filename);
+        $file = $this->workingDir.$filename;
+
+        if (!file_exists($file)) {
+            throw new Exception(sprintf('No file/directory named "%s".', $filename));
+        }
+
+        $type = is_dir($file) ? self::TYPE_DIR : self::TYPE_FILE;
+
+        // check permissions
+        if (self::TYPE_FILE === $type && !$this->permissions->canDownloadFile() && $this->secure) {
+            throw new AccessDeniedException('You do not have the required permissions to download files.');
+        } elseif (self::TYPE_DIR === $type) {
+            throw new AccessDeniedException('You can\'t download a directory.');
+        }
+
+        $fileObject = new BaseFile($file);
+
+        return $this->fileServe->create($file, $fileObject->getType(), array('absolute_path'=>true));
     }
 
     /**
