@@ -59,6 +59,7 @@ zenstruck_media:
         name:
             root_dir:             %kernel.root_dir%/../web/files # Required
             web_prefix:           /files # Required
+            secure:               false
 
             # Comma separated list of extensions
             allowed_extensions:   ~ # Example: jpg,gif,png
