@@ -22,7 +22,6 @@ class MediaController
     protected $factory;
     protected $templating;
     protected $router;
-    protected $fileServe;
     protected $serializer;
 
     public function __construct(

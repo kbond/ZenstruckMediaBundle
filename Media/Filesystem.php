@@ -61,6 +61,10 @@ class Filesystem
         $this->secure       = $secure;
         $this->fileServe    = $fileServe;
 
+        if ($secure === true && !$this->fileServe) {
+            throw new Exception("You can't use secure file download without IgorwFileServeBundle")
+        }
+
         if (!is_dir($this->workingDir)) {
             throw new DirectoryNotFoundException(sprintf('Directory "%s" not found.', $this->workingDir));
         }
@@ -222,7 +226,13 @@ class Filesystem
             throw new AccessDeniedException('You do not have the required permissions to delete directories.');
         }
 
-        return array();
+        try {
+            $this->filesystem->remove($file);
+        } catch (\Exception $e) {
+            throw new Exception(sprintf('Error deleting %s "%s".  Check permissions.', $type, $filename));
+        }
+
+        return sprintf('%s "%s" deleted.', ucfirst($type), $filename);
     }
 
     /**
