@@ -5,7 +5,6 @@ namespace Zenstruck\MediaBundle\Controller;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -23,6 +22,7 @@ class MediaController
     protected $factory;
     protected $templating;
     protected $router;
+    protected $fileServe;
     protected $serializer;
 
     public function __construct(
@@ -102,6 +102,18 @@ class MediaController
         return $this->getMessageResponse($message, 201);
     }
 
+    public function downloadAction(Request $request)
+    {
+        try {
+            $filesystem = $this->factory->getFilesystem($request);
+            $response   = $filesystem->downloadFile($request->get('file'));
+        } catch (Exception $e) {
+            return $this->getMessageResponse($e->getMessage(), $e->getCode());
+        }
+
+        return $response;
+    }
+
     public function deleteAction(Request $request)
     {
         $filename = $request->query->get('filename');
@@ -109,7 +121,7 @@ class MediaController
         try {
             $filesystem = $this->factory->getFilesystem($request);
             $message = $filesystem->delete($filename);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return $this->getMessageResponse($e->getMessage(), $e->getCode());
         }
 
@@ -146,6 +158,6 @@ class MediaController
 
     protected function getMessageResponse($message, $statusCode = 200)
     {
-        return new JsonResponse(array('message' => $message, 'code' => $statusCode), $statusCode);
+        return new Response(json_encode(array('message' => $message, 'code' => $statusCode)), $statusCode);
     }
 }

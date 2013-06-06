@@ -1,3 +1,5 @@
 vendor/
 build/
 composer.lock
+.tags
+.tags_sorted_by_file

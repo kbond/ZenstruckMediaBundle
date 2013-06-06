@@ -33,6 +33,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('root_dir')->defaultValue('%kernel.root_dir%/../web/files')->isRequired()->end()
                             ->scalarNode('web_prefix')->defaultValue('/files')->isRequired()->end()
                             ->scalarNode('allowed_extensions')->defaultNull()->info('Comma separated list of extensions')->example('jpg,gif,png')->end()
+                            ->scalarNode('secure')->defaultValue(false)->end()
                         ->end()
                     ->end()
                 ->end()
