@@ -26,7 +26,7 @@ class FilesystemTest extends BaseFilesystemTest
 
     public function testWorkingDirWithoutSlash()
     {
-        $filesystem = new Filesystem('default', 'copy/A', sys_get_temp_dir().'/Fixtures', '/files', new BooleanPermissionProvider());
+        $filesystem = new Filesystem('default', 'copy/A', sys_get_temp_dir().'/Fixtures', '/files', true, new BooleanPermissionProvider());
         $this->assertEquals($this->getTempFixtureDir().'copy/A/', $filesystem->getWorkingDir());
     }
 
@@ -49,7 +49,7 @@ class FilesystemTest extends BaseFilesystemTest
             $this->markTestSkipped('Skip on windows.');
         }
 
-        $filesystem = new Filesystem('default', null, '/', '/', new BooleanPermissionProvider());
+        $filesystem = new Filesystem('default', null, '/', '/', true, new BooleanPermissionProvider());
 
         $this->assertFalse($filesystem->isWritable());
     }
