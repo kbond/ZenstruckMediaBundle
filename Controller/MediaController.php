@@ -116,7 +116,7 @@ class MediaController
         try {
             $filesystem = $this->factory->getFilesystem($request);
             $message = $filesystem->delete($filename);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return $this->getMessageResponse($e->getMessage(), $e->getCode());
         }
 
@@ -165,7 +165,8 @@ class MediaController
         $file = new File($file);
 
         return $this->responseFactory->create($file->getPathname(), $file->getMimeType(), array(
-                'absolute_path' => true
+                'absolute_path' => true,
+                'inline' => $request->get('inline')
             )
         );
     }
