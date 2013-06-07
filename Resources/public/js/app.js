@@ -212,6 +212,9 @@ var listCtrl = ['$scope', '$routeParams', '$http', 'Config', function($scope, $r
                     parent.jQuery.fancybox.close();
                 }
                 break;
+            default:
+                window.open(file.web_path);
+                break;
         }
     };
 
