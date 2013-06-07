@@ -116,7 +116,7 @@ class MediaController
         try {
             $filesystem = $this->factory->getFilesystem($request);
             $message = $filesystem->delete($filename);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return $this->getMessageResponse($e->getMessage(), $e->getCode());
         }
 
@@ -166,6 +166,27 @@ class MediaController
 
         return $this->responseFactory->create($file->getPathname(), $file->getMimeType(), array(
                 'absolute_path' => true
+            )
+        );
+    }
+
+    public function downloadAction(Request $request)
+    {
+        try {
+            $filesystem = $this->factory->getFilesystem($request);
+            $file = $filesystem->get($request->get('file'));
+        } catch (FileNotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            throw new SymfonyAccessDeniedException($e->getMessage());
+        }
+
+        $file = new File($file);
+
+        return $this->responseFactory->create($file->getPathname(), $file->getMimeType(), array(
+                'absolute_path' => true,
+                'serve_filename' => $file->getFilename(),
+                'inline'=>false
             )
         );
     }
