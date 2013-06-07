@@ -19,7 +19,8 @@
         "zenstruck/slugify-bundle": "~1.0"
     },
     "suggest": {
-        "zenstruck/slugify-bundle": "For the SlugifyFilenameFilter"
+        "zenstruck/slugify-bundle": "For the SlugifyFilenameFilter",
+        "igorw/file-serve-bundle": "For secure filesystems"
     },
     "autoload": {
         "psr-0": { "Zenstruck\\MediaBundle": "" }

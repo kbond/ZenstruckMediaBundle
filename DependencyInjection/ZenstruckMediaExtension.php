@@ -25,11 +25,12 @@ class ZenstruckMediaExtension extends Extension
 
         $container->setParameter('zenstruck_media.default_layout', $config['default_layout']);
         $container->setParameter('zenstruck_media.filesystem.class', $config['filesystem_class']);
+        $bundles = $container->getParameter('kernel.bundles');
 
         $factoryDefinition = $container->getDefinition('zenstruck_media.filesystem_factory');
 
         if ($config['slugify_filename_filter']) {
-            if (!array_key_exists('ZenstruckSlugifyBundle', $container->getParameter('kernel.bundles'))) {
+            if (!array_key_exists('ZenstruckSlugifyBundle', $bundles)) {
                 throw new \Exception('ZenstruckSlugifyBundle must be installed in order to use the "slugify_filename_filter" type.');
             }
 
@@ -46,6 +47,10 @@ class ZenstruckMediaExtension extends Extension
         }
 
         foreach ($config['filesystems'] as $name => $filesystemConfig) {
+            if ($filesystemConfig['secure'] && !array_key_exists('IgorwFileServeBundle', $bundles)) {
+                throw new \Exception('IgorwFileServeBundle must be installed in order to use "secure" filesystems.');
+            }
+
             $factoryDefinition->addMethodCall('addFilesystem', array($name, $filesystemConfig));
         }
     }

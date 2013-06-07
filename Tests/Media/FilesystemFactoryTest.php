@@ -13,13 +13,13 @@ class FilesystemFactoryTest extends BaseFilesystemTest
     public function testAddManagerBadConfig()
     {
         $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\MissingOptionsException');
-        $factory = new FilesystemFactory();
+        $factory = new FilesystemFactory($this->getRouter());
         $factory->addFilesystem('default', array());
     }
 
     public function testGetFilesystem()
     {
-        $factory = new FilesystemFactory();
+        $factory = new FilesystemFactory($this->getRouter());
         $factory->addFilesystem('default', array(
                 'root_dir' => '/tmp',
                 'web_prefix' => '/files'
@@ -55,5 +55,10 @@ class FilesystemFactoryTest extends BaseFilesystemTest
 
         $request = new Request(array('filesystem' => 'default'));
         $this->assertEquals('default', $factory->getFilesystem($request)->getName());
+    }
+
+    public function getRouter()
+    {
+        return $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
     }
 }

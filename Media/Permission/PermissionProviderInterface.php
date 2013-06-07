@@ -36,4 +36,9 @@ interface PermissionProviderInterface
      * @return bool
      */
     public function canUploadFile();
+
+    /**
+     * @return bool
+     */
+    public function canReadFile();
 }
