@@ -43,4 +43,9 @@ class BooleanPermissionProvider implements PermissionProviderInterface
     {
         return $this->return;
     }
+
+    public function canReadFile()
+    {
+        return $this->return;
+    }
 }

@@ -33,6 +33,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('root_dir')->defaultValue('%kernel.root_dir%/../web/files')->cannotBeEmpty()->end()
                             ->scalarNode('web_prefix')->defaultValue('/files')->cannotBeEmpty()->end()
                             ->scalarNode('allowed_extensions')->defaultNull()->info('Comma separated list of extensions')->example('jpg,gif,png')->end()
+                            ->booleanNode('secure')->defaultFalse()->info('set true and change the path to a non public path for secure file downloads')->end()
                         ->end()
                     ->end()
                 ->end()

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Zenstruck\MediaBundle\Exception\AccessDeniedException;
 use Zenstruck\MediaBundle\Exception\DirectoryNotFoundException;
 use Zenstruck\MediaBundle\Exception\Exception;
+use Zenstruck\MediaBundle\Exception\FileNotFoundException;
 use Zenstruck\MediaBundle\Media\Filter\FilenameFilterInterface;
 use Zenstruck\MediaBundle\Media\Permission\PermissionProviderInterface;
 
@@ -33,7 +34,15 @@ class Filesystem
 
     protected $permissions;
 
-    public function __construct($name, $path, $rootDir, $webPrefix, PermissionProviderInterface $permissions, $allowedExtensions = null)
+    public function __construct(
+        $name,
+        $path,
+        $rootDir,
+        $webPrefix,
+        PermissionProviderInterface $permissions,
+        $allowedExtensions = null,
+        $securePath = null
+    )
     {
         // check for .. - user is trying to access invalid directories
         if (preg_match('#\.\.#', $path)) {
@@ -54,6 +63,7 @@ class Filesystem
         }
 
         $this->permissions = $permissions;
+        $this->securePath = $securePath;
 
         if (!is_dir($this->workingDir)) {
             throw new DirectoryNotFoundException(sprintf('Directory "%s" not found.', $this->workingDir));
@@ -114,13 +124,33 @@ class Filesystem
             ->in($this->workingDir)
         ;
 
-        $webPrefix = $this->webPrefix.$this->path;
+        if ($this->securePath) {
+            $webPrefix = sprintf('%s&file=%s', $this->securePath, $this->path);
+        } else {
+            $webPrefix = $this->webPrefix.$this->path;
+        }
 
         return array_map(function($file) use ($webPrefix) {
                 return new File($file, $webPrefix);
             },
             iterator_to_array($files->getIterator(), false)
         );
+    }
+
+    public function get($filename)
+    {
+        // check permissions
+        if (!$this->permissions->canReadFile()) {
+            throw new AccessDeniedException('You do not have the required permissions to read files.');
+        }
+
+        $file = $this->workingDir.$filename;
+
+        if (!is_file($file)) {
+            throw new FileNotFoundException(sprintf('The file "%s" was not found', $filename));
+        }
+
+        return $file;
     }
 
     /**
