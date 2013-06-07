@@ -45,4 +45,9 @@ class RolePermissionProvider implements PermissionProviderInterface
     {
         return $this->securityContext->isGranted('ROLE_MEDIA_UPLOAD');
     }
+
+    public function canReadFile()
+    {
+        return $this->securityContext->isGranted('ROLE_MEDIA_READ');
+    }
 }

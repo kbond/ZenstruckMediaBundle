@@ -35,6 +35,20 @@
         <requirement key="_format">json</requirement>
     </route>
 
+    <route id="zenstruck_media_read" pattern="/read">
+        <default key="_controller">zenstruck_media.controller:readAction</default>
+        <default key="inline">true</default>
+        <requirement key="inline">true|false</requirement>
+        <requirement key="_method">get</requirement>
+    </route>
+
+    <route id="zenstruck_media_download" pattern="/download">
+        <default key="_controller">zenstruck_media.controller:readAction</default>
+        <default key="inline">false</default>
+        <requirement key="inline">true|false</requirement>
+        <requirement key="_method">get</requirement>
+    </route>
+
     <route id="zenstruck_media_mkdir" pattern="/mkdir.{_format}">
         <default key="_controller">zenstruck_media.controller:mkdirAction</default>
         <default key="_format">json</default>
