@@ -185,7 +185,6 @@ class MediaController
 
         return $this->responseFactory->create($file->getPathname(), $file->getMimeType(), array(
                 'absolute_path' => true,
-                'serve_filename' => $file->getFilename(),
                 'inline'=>false
             )
         );
