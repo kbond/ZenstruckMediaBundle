@@ -3,22 +3,39 @@
 /**
  * App
  */
-angular.module('ZenstruckMedia', ['ngUpload'])
-    .config(['$routeProvider', function($routeProvider) {
+var ZenstruckMediaApp = angular.module('ZenstruckMedia', ['ngUpload'])
+    .config(['$routeProvider', '$interpolateProvider', function($routeProvider, $interpolateProvider) {
+        // configure routes
         $routeProvider
             .when('/', {templateUrl: 'list.html', controller: listCtrl})
-            .otherwise({redirectTo: '/'});
-    }])
+            .otherwise({redirectTo: '/'})
+        ;
 
-    .config(
-        function($interpolateProvider){
-            $interpolateProvider.startSymbol('[[').endSymbol(']]');
-        })
+        // use square brackets
+        $interpolateProvider.startSymbol('[[').endSymbol(']]');
+    }])
 
     /**
      * Services
      */
-    .factory('Config', function() {
+    .factory('ZenstruckMediaItem', function() {
+        return {
+            click: function(file) {
+                if (file.image && jQuery.fancybox) {
+                    jQuery.fancybox.open({
+                        href : file.web_path,
+                        title : file.filename
+                    });
+
+                    return;
+                }
+
+                window.open(file.web_path, '_blank');
+            }
+        }
+    })
+
+    .factory('ZenstruckMediaConfig', function() {
         var $el = $('#zenstruck-media');
 
         // configure hover event for file actions
@@ -49,7 +66,9 @@ angular.module('ZenstruckMedia', ['ngUpload'])
 /**
  * Controllers
  */
-var listCtrl = ['$scope', '$routeParams', '$http', 'Config', function($scope, $routeParams, $http, Config) {
+var listCtrl = ['$scope', '$routeParams', '$http', 'ZenstruckMediaConfig', 'ZenstruckMediaItem',
+    function($scope, $routeParams, $http, Config, Media) {
+
     // public properties
     $scope.path = $routeParams.path ? $routeParams.path : '';
     $scope.ancestors = $scope.path.split('/');
@@ -211,6 +230,9 @@ var listCtrl = ['$scope', '$routeParams', '$http', 'Config', function($scope, $r
                     parent.ZenstruckMediaWidget.selectFile(file.web_path);
                 }
                 break;
+
+            default:
+                Media.click(file);
         }
     };
 
