@@ -207,9 +207,8 @@ var listCtrl = ['$scope', '$routeParams', '$http', 'Config', function($scope, $r
                 break;
 
             case 'media-widget':
-                if (parent.ZenstuckMedia) {
-                    parent.ZenstuckMedia.currentMediaInputFile = file.web_path;
-                    parent.jQuery.fancybox.close();
+                if (parent.ZenstruckMediaWidget) {
+                    parent.ZenstruckMediaWidget.selectFile(file.web_path);
                 }
                 break;
         }
