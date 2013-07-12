@@ -28,21 +28,21 @@ Provides a simple media/file management GUI for Symfony2:
 
 4. Register the bundle with Symfony2:
 
-```php
-// app/AppKernel.php
-
-public function registerBundles()
-{
-    $bundles = array(
+    ```php
+    // app/AppKernel.php
+    
+    public function registerBundles()
+    {
+        $bundles = array(
+            // ...
+            new Zenstruck\MediaBundle\ZenstruckMediaBundle(),
+    
+            // enable if you want to use the slugify filename feature
+            // new Zenstruck\SlugifyBundle\ZenstruckSlugifyBundle()
+        );
         // ...
-        new Zenstruck\MediaBundle\ZenstruckMediaBundle(),
-
-        // enable if you want to use the slugify filename feature
-        // new Zenstruck\SlugifyBundle\ZenstruckSlugifyBundle()
-    );
-    // ...
-}
-```
+    }
+    ```
 
 ## Full Default Config
 
