@@ -111,7 +111,7 @@ class Filesystem
     public function getFiles()
     {
         $files = Finder::create()
-            ->sort(function(\SplFileInfo $a, \SplFileInfo $b) {
+            ->sort(function (\SplFileInfo $a, \SplFileInfo $b) {
                     if ($a->isDir() && $b->isFile()) {
                         return -1;
                     } elseif ($a->isFile() && $b->isDir()) {
@@ -130,7 +130,7 @@ class Filesystem
             $webPrefix = $this->webPrefix.$this->path;
         }
 
-        return array_map(function($file) use ($webPrefix) {
+        return array_map(function ($file) use ($webPrefix) {
                 return new File($file, $webPrefix);
             },
             iterator_to_array($files->getIterator(), false)
