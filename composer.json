@@ -16,10 +16,11 @@
         "jms/serializer": "~0.11"
     },
     "require-dev": {
-        "zenstruck/slugify-bundle": "~1.0"
+        "cocur/slugify": "~0.8"
     },
     "suggest": {
-        "zenstruck/slugify-bundle": "For the SlugifyFilenameFilter",
+        "cocur/slugify": "CocurSlugifyBundle is required for SlugifyFilenameFilter",
+        "zenstruck/slugify-bundle": "If not using CocurSlugifyBundle, then this is required for the SlugifyFilenameFilter",
         "igorw/file-serve-bundle": "For secure filesystems"
     },
     "autoload": {

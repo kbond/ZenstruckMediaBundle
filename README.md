@@ -22,23 +22,23 @@ Provides a simple media/file management GUI for Symfony2:
 
         bower install ngUpload
 
-3. *Optional*  If using the slugify filename feature, add [zenstruck/slugify-bundle][5] to your composer.json
+3. *Optional*  If using the slugify filename feature, add [cocur/slugify][5] to your composer.json
 
-        composer require zenstruck/slugify-bundle
+        composer require cocur/slugify
 
 4. Register the bundle with Symfony2:
 
     ```php
     // app/AppKernel.php
-    
+
     public function registerBundles()
     {
         $bundles = array(
             // ...
             new Zenstruck\MediaBundle\ZenstruckMediaBundle(),
-    
+
             // enable if you want to use the slugify filename feature
-            // new Zenstruck\SlugifyBundle\ZenstruckSlugifyBundle()
+            // new Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle()
         );
         // ...
     }
@@ -69,4 +69,4 @@ zenstruck_media:
 [2]: http://sandbox.zenstruck.com/
 [3]: http://twilson63.github.io/ngUpload/
 [4]: http://bower.io/
-[5]: https://github.com/kbond/ZenstruckSlugifyBundle
+[5]: https://github.com/cocur/slugify#symfony2

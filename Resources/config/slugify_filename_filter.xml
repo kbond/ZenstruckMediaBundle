@@ -10,7 +10,7 @@
 
     <services>
         <service id="zenstruck_media.slugify_filename_filter" class="%zenstruck_media.slugify_filename_filter.class%">
-            <argument type="service" id="zenstruck.slugify" />
+            <argument />
             <tag name="zenstruck_media.filename_filter" />
         </service>
     </services>

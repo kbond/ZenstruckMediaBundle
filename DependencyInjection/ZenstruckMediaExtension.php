@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -30,11 +31,21 @@ class ZenstruckMediaExtension extends Extension
         $factoryDefinition = $container->getDefinition('zenstruck_media.filesystem_factory');
 
         if ($config['slugify_filename_filter']) {
-            if (!array_key_exists('ZenstruckSlugifyBundle', $bundles)) {
-                throw new \Exception('ZenstruckSlugifyBundle must be installed in order to use the "slugify_filename_filter" type.');
-            }
-
             $loader->load('slugify_filename_filter.xml');
+            $slugifyFilterDefinition = $container->getDefinition('zenstruck_media.slugify_filename_filter');
+
+            switch (true) {
+                case isset($bundles['ZenstruckSlugifyBundle']):
+                    $slugifyFilterDefinition->replaceArgument(0, new Reference('zenstruck.slugify'));
+                    break;
+
+                case isset($bundles['CocurSlugifyBundle']):
+                    $slugifyFilterDefinition->replaceArgument(0, new Reference('cocur_slugify'));
+                    break;
+
+                default:
+                    throw new \LogicException('CocurSlugifyBundle or ZenstruckSlugifyBundle must be installed in order to use the "slugify_filename_filter" type.');
+            }
         }
 
         if ($config['media_form_type']) {

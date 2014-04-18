@@ -13,7 +13,7 @@ class TestKernel extends Kernel
         $bundles = array(
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
-            new \Zenstruck\SlugifyBundle\ZenstruckSlugifyBundle(),
+            new \Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle(),
             new \Zenstruck\MediaBundle\ZenstruckMediaBundle()
         );
 
