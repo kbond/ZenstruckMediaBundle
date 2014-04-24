@@ -20,7 +20,7 @@
     },
     "suggest": {
         "cocur/slugify": "CocurSlugifyBundle is required for SlugifyFilenameFilter",
-        "zenstruck/slugify-bundle": "If not using CocurSlugifyBundle, then this is required for the SlugifyFilenameFilter",
+        "zenstruck/slugify-bundle": "If not using CocurSlugifyBundle, then this is required for the SlugifyFilenameFilter"
     },
     "autoload": {
         "psr-0": { "Zenstruck\\MediaBundle": "" }
