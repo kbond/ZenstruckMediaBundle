@@ -2,11 +2,10 @@
 
 namespace Zenstruck\MediaBundle\Controller;
 
-use Igorw\FileServeBundle\Response\AbstractResponseFactory;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -28,15 +27,13 @@ class MediaController
     protected $templating;
     protected $router;
     protected $serializer;
-    protected $responseFactory;
 
     public function __construct(
         $defaultLayout,
         FilesystemFactory $factory,
         EngineInterface $templating,
         UrlGeneratorInterface $router,
-        Serializer $serializer = null,
-        AbstractResponseFactory $responseFactory = null
+        Serializer $serializer = null
     )
     {
         $this->defaultLayout = $defaultLayout;
@@ -44,7 +41,6 @@ class MediaController
         $this->templating = $templating;
         $this->router = $router;
         $this->serializer = $serializer;
-        $this->responseFactory = $responseFactory;
     }
 
     public function indexAction(Request $request)
@@ -162,13 +158,7 @@ class MediaController
             throw new SymfonyAccessDeniedException($e->getMessage());
         }
 
-        $file = new File($file);
-
-        return $this->responseFactory->create($file->getPathname(), $file->getMimeType(), array(
-                'absolute_path' => true,
-                'inline' => $request->get('inline')
-            )
-        );
+        return new BinaryFileResponse($file);
     }
 
     protected function getMessageResponse($message, $statusCode = 200)

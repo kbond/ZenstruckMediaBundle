@@ -58,10 +58,6 @@ class ZenstruckMediaExtension extends Extension
         }
 
         foreach ($config['filesystems'] as $name => $filesystemConfig) {
-            if ($filesystemConfig['secure'] && !array_key_exists('IgorwFileServeBundle', $bundles)) {
-                throw new \Exception('IgorwFileServeBundle must be installed in order to use "secure" filesystems.');
-            }
-
             $factoryDefinition->addMethodCall('addFilesystem', array($name, $filesystemConfig));
         }
     }

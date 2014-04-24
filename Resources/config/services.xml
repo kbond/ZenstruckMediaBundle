@@ -20,7 +20,6 @@
             <argument type="service" id="templating" />
             <argument type="service" id="router" />
             <argument type="service" id="jms_serializer" on-invalid="ignore" /> <!-- Serializer -->
-            <argument type="service" id="igorw_file_serve.response_factory" on-invalid="ignore" strict="false" /> <!-- Response Factory -->
         </service>
     </services>
 </container>
