@@ -9,7 +9,7 @@ Provides a simple media/file management GUI for Symfony2:
 
 [![Screenshot][1]][2]
 
-[View Demo][2]
+[View Example Source Code][2]
 
 ## Installation
 
@@ -66,7 +66,7 @@ zenstruck_media:
 ```
 
 [1]: https://lh5.googleusercontent.com/-c7FHKPXsrvg/UYuZtMA3pKI/AAAAAAAAKGA/82ZdM0Tpr4Y/w963-h438-no/zenstruck-media.png
-[2]: http://sandbox.zenstruck.com/
+[2]: https://github.com/kbond/sandbox
 [3]: http://twilson63.github.io/ngUpload/
 [4]: http://bower.io/
 [5]: https://github.com/cocur/slugify#symfony2
