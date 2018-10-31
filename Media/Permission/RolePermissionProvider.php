@@ -2,52 +2,52 @@
 
 namespace Zenstruck\MediaBundle\Media\Permission;
 
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 class RolePermissionProvider implements PermissionProviderInterface
 {
-    protected $securityContext;
+    protected $authChecker;
 
-    public function __construct(SecurityContextInterface $securityContext)
+    public function __construct(AuthorizationCheckerInterface $authChecker)
     {
-        $this->securityContext = $securityContext;
+        $this->authChecker = $authChecker;
     }
 
     public function canMkDir()
     {
-        return $this->securityContext->isGranted('ROLE_MEDIA_MKDIR');
+        return $this->authChecker->isGranted('ROLE_MEDIA_MKDIR');
     }
 
     public function canRenameFile()
     {
-        return $this->securityContext->isGranted('ROLE_MEDIA_RENAME_FILE');
+        return $this->authChecker->isGranted('ROLE_MEDIA_RENAME_FILE');
     }
 
     public function canRenameDir()
     {
-        return $this->securityContext->isGranted('ROLE_MEDIA_RENAME_DIR');
+        return $this->authChecker->isGranted('ROLE_MEDIA_RENAME_DIR');
     }
 
     public function canDeleteFile()
     {
-        return $this->securityContext->isGranted('ROLE_MEDIA_DELETE_FILE');
+        return $this->authChecker->isGranted('ROLE_MEDIA_DELETE_FILE');
     }
 
     public function canDeleteDir()
     {
-        return $this->securityContext->isGranted('ROLE_MEDIA_DELETE_DIR');
+        return $this->authChecker->isGranted('ROLE_MEDIA_DELETE_DIR');
     }
 
     public function canUploadFile()
     {
-        return $this->securityContext->isGranted('ROLE_MEDIA_UPLOAD');
+        return $this->authChecker->isGranted('ROLE_MEDIA_UPLOAD');
     }
 
     public function canReadFile()
     {
-        return $this->securityContext->isGranted('ROLE_MEDIA_READ');
+        return $this->authChecker->isGranted('ROLE_MEDIA_READ');
     }
 }

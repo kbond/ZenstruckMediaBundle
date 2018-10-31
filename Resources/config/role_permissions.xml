@@ -10,7 +10,7 @@
 
     <services>
         <service id="zenstruck_media.permission_provider" class="%zenstruck_media.permission_provider.class%" public="false">
-            <argument type="service" id="security.context" />
+            <argument type="service" id="security.authorization_checker" />
         </service>
     </services>
 </container>
