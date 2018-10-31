@@ -4,45 +4,45 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="zenstruck_media_index" pattern="/" methods="GET">
+    <route id="zenstruck_media_index" path="/" methods="GET">
         <default key="_controller">zenstruck_media.controller:indexAction</default>
     </route>
 
-    <route id="zenstruck_media_files" pattern="/files.{_format}" methods="GET">
+    <route id="zenstruck_media_files" path="/files.{_format}" methods="GET">
         <default key="_controller">zenstruck_media.controller:getFilesAction</default>
         <default key="_format">json</default>
         <requirement key="_format">json</requirement>
     </route>
 
-    <route id="zenstruck_media_upload" pattern="/upload" methods="POST">
+    <route id="zenstruck_media_upload" path="/upload" methods="POST">
         <default key="_controller">zenstruck_media.controller:uploadAction</default>
     </route>
 
-    <route id="zenstruck_media_delete" pattern="/delete.{_format}" methods="DELETE">
+    <route id="zenstruck_media_delete" path="/delete.{_format}" methods="DELETE">
         <default key="_controller">zenstruck_media.controller:deleteAction</default>
         <default key="_format">json</default>
         <requirement key="_format">json</requirement>
     </route>
 
-    <route id="zenstruck_media_rename" pattern="/rename.{_format}" methods="PUT">
+    <route id="zenstruck_media_rename" path="/rename.{_format}" methods="PUT">
         <default key="_controller">zenstruck_media.controller:renameAction</default>
         <default key="_format">json</default>
         <requirement key="_format">json</requirement>
     </route>
 
-    <route id="zenstruck_media_read" pattern="/read" methods="GET">
+    <route id="zenstruck_media_read" path="/read" methods="GET">
         <default key="_controller">zenstruck_media.controller:readAction</default>
         <default key="inline">true</default>
         <requirement key="inline">true|false</requirement>
     </route>
 
-    <route id="zenstruck_media_download" pattern="/download" methods="GET">
+    <route id="zenstruck_media_download" path="/download" methods="GET">
         <default key="_controller">zenstruck_media.controller:readAction</default>
         <default key="inline">false</default>
         <requirement key="inline">true|false</requirement>
     </route>
 
-    <route id="zenstruck_media_mkdir" pattern="/mkdir.{_format}" methods="POST">
+    <route id="zenstruck_media_mkdir" path="/mkdir.{_format}" methods="POST">
         <default key="_controller">zenstruck_media.controller:mkdirAction</default>
         <default key="_format">json</default>
         <requirement key="_format">json</requirement>
