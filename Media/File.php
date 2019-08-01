@@ -76,7 +76,7 @@ class File
 
     protected static function getImageExtensions()
     {
-        return array('jpg', 'jpeg', 'gif', 'png');
+        return array('jpg', 'jpeg', 'gif', 'png', 'svg');
     }
 
     /**
