@@ -4,7 +4,6 @@ namespace Zenstruck\MediaBundle\Controller;
 
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +15,7 @@ use Zenstruck\MediaBundle\Exception\DirectoryNotFoundException;
 use Zenstruck\MediaBundle\Exception\Exception;
 use Zenstruck\MediaBundle\Exception\FileNotFoundException;
 use Zenstruck\MediaBundle\Media\FilesystemFactory;
+use Twig\Environment;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -31,7 +31,7 @@ class MediaController
     public function __construct(
         $defaultLayout,
         FilesystemFactory $factory,
-        EngineInterface $templating,
+        Environment $templating,
         UrlGeneratorInterface $router,
         Serializer $serializer = null
     )

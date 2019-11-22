@@ -17,7 +17,7 @@
         <service id="zenstruck_media.controller" class="%zenstruck_media.controller.class%" public="true">
             <argument>%zenstruck_media.default_layout%</argument>
             <argument type="service" id="zenstruck_media.filesystem_factory" />
-            <argument type="service" id="templating" />
+            <argument type="service" id="twig" />
             <argument type="service" id="router" />
             <argument type="service" id="jms_serializer" on-invalid="ignore" /> <!-- Serializer -->
         </service>
