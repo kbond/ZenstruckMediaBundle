@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>{% block title %}{% endblock %}</title>
 
-    {% include 'ZenstruckMediaBundle:Twitter:_css.html.twig' %}
+    {% include '@ZenstruckMedia/Twitter/_css.html.twig' %}
 </head>
 <body>
     <div class="container">
@@ -20,6 +20,6 @@
         {% block body %}{% block content %}{% endblock %}{% endblock %}
     </div>
 
-    {% include 'ZenstruckMediaBundle:Twitter:_javascripts.html.twig' %}
+    {% include '@ZenstruckMedia/Twitter/_javascripts.html.twig' %}
 </body>
 </html>

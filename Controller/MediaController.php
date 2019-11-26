@@ -57,7 +57,7 @@ class MediaController
         $layout = $request->query->get('layout');
 
         if ($layout) {
-            $layout = sprintf('ZenstruckMediaBundle:Twitter:%s.html.twig', $layout);
+            $layout = sprintf('@ZenstruckMedia/Twitter/%s.html.twig', $layout);
         }
 
         if (!$opener && $param = $request->query->get('CKEditorFuncNum')) {
@@ -65,7 +65,7 @@ class MediaController
             $openerParam = $param;
         }
 
-        return new Response($this->templating->render('ZenstruckMediaBundle:Twitter:index.html.twig', array(
+        return new Response($this->templating->render('@ZenstruckMedia/Twitter/index.html.twig', array(
                 'filesystem' => $filesystem,
                 'filesystems' => $this->factory->getFilesystemNames(),
                 'default_layout' => $this->defaultLayout,
