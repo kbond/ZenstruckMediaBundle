@@ -2,9 +2,8 @@
 
 namespace Zenstruck\MediaBundle\Controller;
 
-use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -26,21 +25,18 @@ class MediaController
     protected $factory;
     protected $templating;
     protected $router;
-    protected $serializer;
 
     public function __construct(
         $defaultLayout,
         FilesystemFactory $factory,
         Environment $templating,
-        UrlGeneratorInterface $router,
-        Serializer $serializer = null
+        UrlGeneratorInterface $router
     )
     {
         $this->defaultLayout = $defaultLayout;
         $this->factory = $factory;
         $this->templating = $templating;
         $this->router = $router;
-        $this->serializer = $serializer;
     }
 
     public function indexAction(Request $request)
@@ -84,13 +80,7 @@ class MediaController
             return $this->getMessageResponse(sprintf('Directory "%s" not found.', $request->query->get('path')), $e->getCode());
         }
 
-        $files = $filesystem->getFiles();
-
-        if (!$this->serializer) {
-            $this->serializer = SerializerBuilder::create()->build();
-        }
-
-        return new Response($this->serializer->serialize($files, 'json'));
+        return new JsonResponse($filesystem->getFiles());
     }
 
     public function uploadAction(Request $request)

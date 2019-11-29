@@ -5,7 +5,7 @@ namespace Zenstruck\MediaBundle\Media;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class File
+class File implements \JsonSerializable
 {
     const TYPE_FILE = 'file';
     const TYPE_DIR  = 'dir';
@@ -73,6 +73,20 @@ class File
     {
         return $this->type === static::TYPE_FILE;
     }
+
+    public function jsonSerialize()
+    {
+        return [
+            'extension' => $this->getExtension(),
+            'filename' => $this->getFilename(),
+            'image' => $this->isImage(),
+            'new' => $this->isImage(),
+            'size' => $this->getSize(),
+            'type' => $this->getType(),
+            'web_path' => $this->getWebPath(),
+        ];
+    }
+
 
     protected static function getImageExtensions()
     {
