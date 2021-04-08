@@ -21,14 +21,14 @@ var ZenstruckMediaApp = angular.module('ZenstruckMedia', ['ngUpload'])
     .factory('ZenstruckMediaItem', function() {
         return {
             click: function(file) {
-                if (file.image && jQuery.fancybox) {
-                    jQuery.fancybox.open({
-                        href : file.web_path,
-                        title : file.filename
-                    });
+//                 if (file.image && jQuery.fancybox) {
+//                     jQuery.fancybox.open({
+//                         href : file.web_path,
+//                         title : file.filename
+//                     });
 
-                    return;
-                }
+//                     return;
+//                 }
 
                 window.open(file.web_path, '_blank');
             }
